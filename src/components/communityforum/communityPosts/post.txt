@@ -1,0 +1,16 @@
+
+post title
+description
+author
+upvotes
+tags
+category of post
+location
+media
+
+non-functional -> 
+
+follow author
+flag user/post
+comment
+
