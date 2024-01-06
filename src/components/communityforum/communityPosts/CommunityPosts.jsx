@@ -26,8 +26,8 @@ const CommunityPosts = () => {
                             Set Filters
                         </p>
                         <button
-                        onClick={() => {setPostCategory('')}}
-                         className="px-4 bg-gray-700 hover:bg-gray-200 mt-6
+                            onClick={() => { setPostCategory('') }}
+                            className="px-4 bg-gray-700 hover:bg-gray-200 mt-6
                          text-gray-50 hover:text-slate-950 transition-all hover:shadow-sm hover:shadow-green-400 text-sm font-medium rounded-md">
                             Reset Filter
                         </button>
@@ -71,20 +71,17 @@ const CommunityPosts = () => {
                 </div>
             </div>
 
-            {post.filter((obj) => obj.title.toLowerCase().includes(searchkey.toLowerCase()) || 
-             obj.tags.toLowerCase().includes(searchkey.toLowerCase()))
-            .filter((obj) => obj.category.toLowerCase().includes(categoryType.toLowerCase())).map((item, index) => {
+            {post.filter((obj) => obj.title.toLowerCase().includes(searchkey.toLowerCase()) ||
+                obj.tags.toLowerCase().includes(searchkey.toLowerCase()))
+                .filter((obj) => obj.category.toLowerCase().includes(categoryType.toLowerCase())).map((postItem, index) => {
 
-                const { title, tags, description, imageUrl, id, category, location, author } = item;
-                const tagList = tags.split(", ");
-
-                return (
-                    <div key={index}>
-                        <Post title={title} description={description} imageUrl={imageUrl} id={id}
-                            tagList={tagList} category={category} author={author} location={location}/>
-                    </div>
-                )
-            })}
+                
+                    return (
+                        <div key={index}>
+                            <Post post={postItem}/>
+                        </div>
+                    )
+                })}
 
         </div>
     )

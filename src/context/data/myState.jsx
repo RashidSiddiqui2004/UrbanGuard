@@ -30,7 +30,7 @@ function myState(props) {
         author: null,
         authorId: "",
         location: "",
-        category: "", 
+        category: "",
         imageUrl: null,
         tags: null,
         likes: 0,
@@ -52,7 +52,7 @@ function myState(props) {
         if (posts.title == null || posts.category == null || posts.description == null) {
             return toast.error("All fields are required")
         }
- 
+
         setLoading(true)
 
         try {
@@ -168,21 +168,30 @@ function myState(props) {
     const [comments, setComments] = useState([]);
 
     async function getCommentsForPost(postId) {
-        const commentsRef = collection(fireDB, 'comments'); // Reference to the comments collection
 
-        // Create a query to filter comments by postId
-        const commentsQuery = query(commentsRef, where('post_id', '==', postId));
+        try {
+            const commentsRef = collection(fireDB, 'comments'); // Reference to the comments collection
 
-        // Execute the query and get the documents
-        const querySnapshot = await getDocs(commentsQuery);
+            // Create a query to filter comments by postId
+            const commentsQuery = query(commentsRef, where('post_id', '==', postId));
 
-        // Extract the comment data from the query snapshot
-        const comments = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
+            // Execute the query and get the documents
+            const querySnapshot = await getDocs(commentsQuery);
 
-        setComments(comments);
+            // Extract the comment data from the query snapshot
+            const comments = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+ 
+            setComments(comments);
+
+            return comments;
+
+        } catch (error) {
+            console.error('Error fetching comments:', error.message); 
+        }
+
         return;
     }
 
@@ -309,62 +318,6 @@ function myState(props) {
     }, []);
 
 
-    // submissions
-
-    const [submission, setSubmission] = useState({
-        problem_id: null,
-        approach: null,
-        solution: null,
-        author: null,
-        time: Timestamp.now()
-    });
-
-    const sendSubmission = async () => {
-
-        if (submission.problem_id == null) {
-            return toast.error("Author is required..")
-        }
-
-        if (submission.approach == null) {
-            return toast.error("Approach is required..");
-        }
-
-        setLoading(true)
-
-        try {
-            const submsRef = collection(fireDB, 'submissions');
-            await addDoc(submsRef, submission)
-
-            // update the submission count for challenge
-
-            // Fetch the challenge document
-            const challengeDocRef = doc(fireDB, "challenges", submission.problem_id);
-            const challengeDocSnapshot = await getDoc(challengeDocRef);
-
-            if (challengeDocSnapshot.exists()) {
-                const currentSubmissionCount = challengeDocSnapshot.data().submissions || 0;
-
-                // Increment the submission count by 1
-                const newSubmissionCount = currentSubmissionCount + 1;
-
-                // Update the challenge's submission count in the database
-                await updateDoc(challengeDocRef, {
-                    submissions: newSubmissionCount,
-                });
-            }
-
-            toast.success("Submitted Successfully");
-            setTimeout(() => { 
-                window.location.reload();
-            }, 500);
-
-            setLoading(false)
-        } catch (error) {
-            console.log(error);
-            setLoading(false)
-        }
-    }
-
     const [user, setUser] = useState([]);
 
     const getUserData = async () => {
@@ -427,29 +380,29 @@ function myState(props) {
         // Create a Firestore reference to the post document using a collection group query
         const commentsColl = collection(fireDB, 'comments');
         const postRef = query(commentsColl, where('id', '==', commentId));
-         
+
         // Prepare the reply data
         const replyData = {
-            userId: userID, 
+            userId: userID,
             reply: userReply,
             username: username,
             timestamp: new Date()
         };
-    
+
         // Get the existing comment data, including the 'replies' array
         try {
             const userQuery = query(commentsColl, where('id', '==', commentId));
             const querySnapshot = await getDocs(userQuery);
-    
+
             if (!querySnapshot.empty) {
                 const userDocument = querySnapshot.docs[0].data();
-    
+
                 // Extract the existing 'replies' array
                 const existingReplies = userDocument.replies || [];
-    
+
                 // Use the `arrayUnion` method to append the reply to the 'replies' array
                 existingReplies.push(replyData);
-    
+
                 // Update the document with the new 'replies' array
                 await updateDoc(querySnapshot.docs[0].ref, {
                     replies: existingReplies
@@ -467,22 +420,22 @@ function myState(props) {
         fullname: "",      // User's full name
         DOB: null,         // Date of Birth (you can use Firebase Timestamp)
         age: null,         // Calculated or updated age (can be derived from DOB)
-        email: "",          
-        phoneNo: null,     
-        imageUrl: null,    
+        email: "",
+        phoneNo: null,
+        imageUrl: null,
         // prefereces
         favdestinations: [],
-        preferredActivities: [],  
-        country: "India",   
+        preferredActivities: [],
+        country: "India",
         badge: "Beginner",
         followers: 0,
         followings: 0,
-        time: Timestamp.now() 
+        time: Timestamp.now()
     });
 
     const updateProfile = async () => {
 
-        if (profiles.email == null || profiles.fullname == null || profiles.userid==null) {
+        if (profiles.email == null || profiles.fullname == null || profiles.userid == null) {
             return toast.error("All fields are required")
         }
 
@@ -494,7 +447,7 @@ function myState(props) {
             toast.success("Updated profile successfully");
             setTimeout(() => {
                 window.location.href = '/userprofile'
-            }, 800); 
+            }, 800);
             setLoading(false)
         } catch (error) {
             console.log(error);
@@ -503,23 +456,23 @@ function myState(props) {
     }
 
     const addProfile = async () => {
-        if(profiles.email!=null && profiles.fullname!=null){
-            const profRef = collection(fireDB,'profiles');
-            await addDoc(profRef,profiles);
+        if (profiles.email != null && profiles.fullname != null) {
+            const profRef = collection(fireDB, 'profiles');
+            await addDoc(profRef, profiles);
             toast.success("Updated profile siuccessfully!");
             setTimeout(() => {
                 window.location.href = "/userprofile";
             }, 800);
             setLoading(false)
         }
-        else{
+        else {
             console.log("User email is not specified");
         }
     }
 
     const updateProfileAuto = async () => {
 
-        if (profiles.email == null || profiles.fullname == null || profiles.userid==null) {
+        if (profiles.email == null || profiles.fullname == null || profiles.userid == null) {
             return toast.error("All fields are required")
         }
 
@@ -528,7 +481,7 @@ function myState(props) {
         try {
             const profileRef = collection(fireDB, 'profiles');
             await addDoc(profileRef, profiles)
-            toast.success("Updated profile successfully"); 
+            toast.success("Updated profile successfully");
             setLoading(false)
         } catch (error) {
             console.log(error);
@@ -542,7 +495,7 @@ function myState(props) {
 
         try {
             const profileRef = doc(fireDB, 'profiles', [profiles.curr_id]);
-            await updateDoc(profileRef, profiles); 
+            await updateDoc(profileRef, profiles);
 
             toast.success("Profile updated successfully");
             setTimeout(() => {
@@ -553,7 +506,7 @@ function myState(props) {
             console.log(error);
             setLoading(false);
         }
-        
+
     };
 
     const [userProfile, setUserprofile] = useState([]);
@@ -564,7 +517,7 @@ function myState(props) {
         try {
             const q = query(
                 collection(fireDB, 'profiles'),
-                where('userid', '==', userid)   
+                where('userid', '==', userid)
             );
 
             const data = onSnapshot(q, (querySnapshot) => {
@@ -582,26 +535,26 @@ function myState(props) {
             setLoading(false);
         }
     }
- 
+
     useEffect(() => {
         getUserData();
     }, []);
 
     const [searchkey, setSearchkey] = useState('')
-    const [categoryType, setPostCategory] = useState('') 
+    const [categoryType, setPostCategory] = useState('')
 
     return (
         <MyContext.Provider value={{
             mode, toggleMode, loading, setLoading,
             posts, setPosts, addPost, post,
-            deletePost,  user, profiles, setProfiles, updateProfile, 
+            deletePost, user, profiles, setProfiles, updateProfile,
             asliUpdateProfile,
-            userProfile, setUserprofile,addProfile, 
-            updateProfileAuto,  getProfileData,  searchkey,
-            setSearchkey, setPostCategory, setPostCategory,categoryType,
+            userProfile, setUserprofile, addProfile,
+            updateProfileAuto, getProfileData, searchkey,
+            setSearchkey, setPostCategory, setPostCategory, categoryType,
             comments, setComments, writeComment,
             getCommentsForPost, getUserEmail, mail, getReplies,
-            replies, setReplies,submitReply
+            replies, setReplies, submitReply
         }}>
             {props.children}
         </MyContext.Provider>

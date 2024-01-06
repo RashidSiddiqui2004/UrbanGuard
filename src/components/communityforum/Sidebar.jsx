@@ -41,9 +41,9 @@ const Sidebar = () => {
     const [user_name, setUser] = useState('');
 
     useEffect(() => {
-        
+
         function usernameFunc() {
-            
+
             const cacheCall = localStorage.getItem("username");
 
             console.log(cacheCall);
@@ -53,7 +53,7 @@ const Sidebar = () => {
                 console.log('cacheCall1');
 
                 let uid = auth.currentUser.uid;
-               
+
                 getUsernameByUID(uid).then((username) => {
                     if (username) {
                         setUser(username);
@@ -63,7 +63,7 @@ const Sidebar = () => {
                     }
                 });
             }
-            else { 
+            else {
                 setUser(cacheCall);
             }
 
@@ -75,9 +75,12 @@ const Sidebar = () => {
 
     return (
         <div className='fixed'>
-            <h2 className='text-md lg:text-xl mt-4 text-slate-800 
-        text-center font-bold'>Urban Guard</h2>
 
+            <Link to={'/'}>
+                <h2 className='text-md lg:text-xl mt-4 text-slate-800 
+        text-center font-bold my-5'>Urban Guard</h2>
+            </Link> 
+            
             <div
                 className='bg-slate-800 py-3 px-4 mx-6 rounded-lg my-3 shadow-md
                  shadow-purple-600 hover:scale-95 transition-all'>

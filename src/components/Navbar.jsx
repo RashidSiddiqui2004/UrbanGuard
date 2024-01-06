@@ -61,15 +61,16 @@ function Navbar() {
                 </div>
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
 
-                  <Link to={'/allposts'} className="text-sm font-medium text-gray-900 " style={{ color: mode === 'dark' ? 'white' : '', }}>
-                    Posts
+                  <Link to={'/community-posts'} className="text-sm font-medium text-gray-900 " style={{ color: mode === 'dark' ? 'white' : '', }}>
+                    Community Posts
                   </Link>
 
                   {user ? <div className="flow-root">
-                    <Link to={'/challenges'} className="text-sm font-medium text-gray-700 " style={{ color: mode === 'dark' ? 'white' : '', }}>
-                      Challenges
+                    <Link to={'/emergency-resources'} className="text-sm font-medium text-gray-700 " style={{ color: mode === 'dark' ? 'white' : '', }}>
+                      Emergency Resources
                     </Link>
                   </div> : ""}
+
 
                   {user?.user?.email === "siddiqui20042007@gmail.com" ? <div className="flow-root">
                     <Link to={'/dashboard'} className="-m-2 block p-2 font-medium text-gray-900" style={{ color: mode === 'dark' ? 'white' : '', }}>
@@ -90,8 +91,9 @@ function Navbar() {
                     <Link to={'/'} className="-m-2 block p-2 font-medium text-gray-900 cursor-pointer">
                       <img
                         className="inline-block w-10 h-10 rounded-full"
-                        src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
-                        alt="Dan_Abromov" />                                        </Link>
+                        src="/user.jpg"
+                        alt="user" />                                        
+                      </Link>
                   </div>
                 </div>
 
@@ -173,7 +175,7 @@ function Navbar() {
                       <img
                         className="inline-block w-10 h-10 rounded-full"
                         src="/user.jpg"
-                        alt="Dan_Abromov" />
+                        alt="user" />
                     </a>
                   </div>
                 </Link>

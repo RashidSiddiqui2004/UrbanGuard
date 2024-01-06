@@ -1,4 +1,10 @@
 import React from 'react'
+import DisasterManager from './DisasterManager';
+
+import earthquake from "/public/earthquake.jpg";
+import flood from "/public/flood.jpg";
+import hurricane from "/public/hurricane.jpg";
+import thunderstorm from "/public/thunderstorm.jpg";
 
 const EmergencyResources = () => {
 
@@ -24,6 +30,33 @@ const EmergencyResources = () => {
             description: 'Connect with emergency services nationwide for immediate assistance.',
         },
     ];
+
+    const disasterData = [
+        {
+          title: 'Earthquake',
+          description: 'Guidelines on what to do during an earthquake.',
+          link: '#',
+          image: earthquake,
+        },
+        {
+          title: 'Flood',
+          description: 'Guidelines on how to stay safe during a flood.',
+          link: '#',
+          image: flood,
+        },
+        {
+          title: 'Hurricane',
+          description: 'Steps to take before and during a hurricane.',
+          link: '#',
+          image: hurricane,
+        }, 
+        {
+            title: 'Thunderstorm',
+            description: 'Steps to take before and during a thunderstorm.',
+            link: '#',
+            image: thunderstorm
+          }, 
+      ];
 
 
     return (
@@ -94,45 +127,14 @@ const EmergencyResources = () => {
             <p className='text-center my-1 text-balance'>Guidance on actions to take during natural disasters such as earthquakes, floods, and storms.
             </p>
 
-            <div className='mx-[10%] lg:grid lg:grid-cols-4 mt-7 lg:gap-y-7'>
-                <div className='bg-white rounded-2xl h-60 w-64 hover:bg-gray-300 transition-all p-4'>
-                    <h2 className='text-xl font-bold mb-2 text-slate-900'>Eartquake</h2>
-                    <p className='text-gray-600 mb-4'>
-                        Guidance on actions to take during natural disasters such as earthquakes, floods, and storms.
-                    </p>
-                    <a
-                        href='#' // Replace with the actual link or details
-                        className='text-blue-500 font-semibold hover:underline'
-                    >
-                        Learn More
-                    </a>
-                </div>
+            <div className='mx-[10%] lg:grid lg:grid-cols-2 mt-7 lg:gap-y-7 gap-10'>
 
-                <div className='bg-white rounded-2xl h-60 w-64 hover:bg-gray-300 transition-all p-4'>
-                    <h2 className='text-xl font-bold mb-2 text-slate-900'>Floods</h2>
-                    <p className='text-gray-600 mb-4'>
-                        Guidance on actions to take during natural disasters such as earthquakes, floods, and storms.
-                    </p>
-                    <a
-                        href='#' // Replace with the actual link or details
-                        className='text-blue-500 font-semibold hover:underline'
-                    >
-                        Learn More
-                    </a>
-                </div>
-
-                <div className='bg-white rounded-2xl h-60 w-64 hover:bg-gray-300 transition-all p-4'>
-                    <h2 className='text-xl font-bold mb-2 text-slate-900'>Cyclone</h2>
-                    <p className='text-gray-600 mb-4'>
-                        Guidance on actions to take during natural disasters such as earthquakes, floods, and storms.
-                    </p>
-                    <a
-                        href='#' // Replace with the actual link or details
-                        className='text-blue-500 font-semibold hover:underline'
-                    >
-                        Learn More
-                    </a>
-                </div>
+                {disasterData.map((disaster, index) => (
+                    <div key={index}>
+                        <DisasterManager disaster={disaster} />
+                    </div>
+                ))}
+ 
             </div>
         </div>
     )

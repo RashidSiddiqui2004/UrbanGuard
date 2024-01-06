@@ -4,14 +4,16 @@ import Navbar from './Navbar'
 import Hero from './Hero'
 import Features from './features/Features'
 import CommunityForumPoster from './posters/CommunityForumPoster'
+import Footer from './Footer'
 
 const Home = () => {
     return (
-        <div className='mb-20'>
+        <div>
            <Navbar/>
            <Hero/>
            <Features/>
-           <CommunityForumPoster/>
+           <CommunityForumPoster/> 
+           <Footer/>
         </div>
       )
 }
