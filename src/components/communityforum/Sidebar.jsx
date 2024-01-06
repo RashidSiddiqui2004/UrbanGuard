@@ -1,5 +1,5 @@
 
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 // import { motion } from 'framer-motion'; 
 
@@ -25,7 +25,7 @@ const Sidebar = () => {
             if (!querySnapshot.empty) {
                 // Retrieve the first (and hopefully only) document
                 const userDoc = querySnapshot.docs[0];
-                const username = userDoc.data().name; 
+                const username = userDoc.data().name;
                 return username;
             } else {
                 console.log('User not found.');
@@ -40,29 +40,38 @@ const Sidebar = () => {
 
     const [user_name, setUser] = useState('');
 
-    const cacheCall = localStorage.getItem("username");
- 
-    if (cacheCall != null) {
+    useEffect(() => {
+        
+        function usernameFunc() {
+            
+            const cacheCall = localStorage.getItem("username");
 
-        let uid;
+            console.log(cacheCall);
 
-        try {
-            uid = auth.currentUser.uid;
-        } catch (err) {
-            console.error("error", err);
+            if (cacheCall == null) {
+
+                console.log('cacheCall1');
+
+                let uid = auth.currentUser.uid;
+               
+                getUsernameByUID(uid).then((username) => {
+                    if (username) {
+                        setUser(username);
+                        localStorage.setItem("username", username);
+                    } else {
+                        console.log(`User with UID ${uid} not found.`);
+                    }
+                });
+            }
+            else { 
+                setUser(cacheCall);
+            }
+
         }
 
-        getUsernameByUID(uid).then((username) => {
-            if (username) {
-                setUser(username);
-                localStorage.setItem("username", username);
-            } else {
-                console.log(`User with UID ${uid} not found.`);
-            }
-        });
-    } else {
-        setUser(cacheCall);
-    }
+        usernameFunc();
+
+    }, []);
 
     return (
         <div className='fixed'>

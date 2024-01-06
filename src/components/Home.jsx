@@ -7,12 +7,12 @@ import CommunityForumPoster from './posters/CommunityForumPoster'
 
 const Home = () => {
     return (
-        <>
+        <div className='mb-20'>
            <Navbar/>
            <Hero/>
            <Features/>
            <CommunityForumPoster/>
-        </>
+        </div>
       )
 }
 

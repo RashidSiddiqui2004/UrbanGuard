@@ -588,8 +588,7 @@ function myState(props) {
     }, []);
 
     const [searchkey, setSearchkey] = useState('')
-    const [filterType, setFilterType] = useState('')
-    const [filterPrice, setFilterPrice] = useState('')
+    const [categoryType, setPostCategory] = useState('') 
 
     return (
         <MyContext.Provider value={{
@@ -599,8 +598,8 @@ function myState(props) {
             asliUpdateProfile,
             userProfile, setUserprofile,addProfile, 
             updateProfileAuto,  getProfileData,  searchkey,
-            setSearchkey, filterType, setFilterType,
-            filterPrice, setFilterPrice, comments, setComments, writeComment,
+            setSearchkey, setPostCategory, setPostCategory,categoryType,
+            comments, setComments, writeComment,
             getCommentsForPost, getUserEmail, mail, getReplies,
             replies, setReplies,submitReply
         }}>

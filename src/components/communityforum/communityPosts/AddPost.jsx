@@ -1,7 +1,6 @@
 
 import React, { useContext, useState } from 'react'
 import { collection, query, where, getDocs } from "firebase/firestore";
-// import "./styles.css"
 import myContext from '../../../context/data/myContext';
 import { auth, fireDB } from '../../../firebase/FirebaseConfig';
 
@@ -10,13 +9,11 @@ function AddPost() {
     const { posts, setPosts, addPost } = context;
 
     const [desc, setDesc] = useState("");
-
-
+    
     const handleDesc = (e) => {
         setDesc(e.target.value);
         setPosts({ ...posts, description: e.target.value });
     };
-
 
     // to get the username
     async function getUsernameByUID(uid) {

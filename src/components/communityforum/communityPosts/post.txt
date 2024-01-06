@@ -14,3 +14,20 @@ follow author
 flag user/post
 comment
 
+
+Incident Map:
+
+A dynamic map displaying reported incidents in real-time.
+Users can explore incident locations, filter by incident type, and view details.
+How It Works:
+
+Step-by-step guide on how the platform works, from incident reporting to emergency services coordination.
+Visual aids and infographics to simplify the process.
+Safety Tips:
+
+Educational content on general safety tips for residents.
+Seasonal or region-specific safety advice to enhance community awareness.
+Emergency Resources:
+
+Information about local emergency services, contact numbers, and resources.
+Quick access to essential services for different types of emergencies.

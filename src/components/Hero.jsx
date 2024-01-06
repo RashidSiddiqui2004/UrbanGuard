@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 const Hero = () => {
     return (
-        <div className='text-center min-h-[500px]'>
+        <div className='text-center min-h-[500px] my-10'>
 
             <motion.h1
                 initial={{ x: -1000 }}

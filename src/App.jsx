@@ -18,6 +18,9 @@ import HeroCommunity from './components/communityforum/HeroCommunity';
 import SafetyTips from './components/communityforum/SafetyTips';
 import CommunityPosts from './components/communityforum/communityPosts/CommunityPosts';
 import AddPost from './components/communityforum/communityPosts/AddPost';
+import NoPage from './components/nopage/NoPage';
+import EmergencyResources from './components/emergencyResources/EmergencyResources';
+import Navbar from './components/Navbar';
 
 function App() {
   return (
@@ -30,6 +33,14 @@ function App() {
             <ProtectedRoute>
               <Reporting />
             </ProtectedRoute>
+          } />
+
+          <Route path="/emergency-resources" element={
+            <div>
+              <Navbar />
+              <EmergencyResources />
+            </div>
+
           } />
 
           <Route path="/community-forum-intro" element={
@@ -105,9 +116,9 @@ function App() {
             </ProtectedRoute>
           } /> */}
 
-          {/* <Route path='/about' element={<AboutUsPage />} />
+          {/* <Route path='/about' element={<AboutUsPage />} /> */}
 
-          <Route path="/*" element={<NoPage />} /> */}
+          <Route path="/*" element={<NoPage />} />
 
         </Routes>
 
