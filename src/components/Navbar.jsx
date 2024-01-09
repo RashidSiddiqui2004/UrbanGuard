@@ -1,8 +1,6 @@
 
 import React, { Fragment, useContext, useState } from 'react'
-import myContext from '../context/data/myContext';
-import { BsFillCloudSunFill } from 'react-icons/bs'
-import { FiSun } from 'react-icons/fi'
+import myContext from '../context/data/myContext';  
 import { Link } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react'
 import { RxCross2 } from 'react-icons/rx'
@@ -11,7 +9,7 @@ function Navbar() {
 
   const context = useContext(myContext);
 
-  const { mode, toggleMode } = context;
+  const { mode } = context;
 
   const [open, setOpen] = useState(false)
 

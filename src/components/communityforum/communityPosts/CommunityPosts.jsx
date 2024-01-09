@@ -9,16 +9,19 @@ const CommunityPosts = () => {
 
     const context = useContext(myContext)
     const { post, searchkey, setPostCategory, categoryType } = context;
+ 
+    const filteredPosts = post.filter((obj) => obj.title.toLowerCase().includes(searchkey.toLowerCase()) ||
+        obj.tags.toLowerCase().includes(searchkey.toLowerCase()))
+        .filter((obj) => obj.category.toLowerCase()
+            .includes(categoryType.toLowerCase()))
 
-    // const user = JSON.parse(localStorage.getItem('user'));
 
     return (
         <div className='mb-8 overflow-x-hidden'>
 
             <div className='flex flex-row justify-around'>
 
-                {/* <h1 className='text-lg font-semibold font-serif mx-2 my-8'>Community Posts</h1> */}
-
+            
                 <div className='w-[30%] ml-[10%] mt-6'>
 
                     <div className="flex items-center justify-between">
@@ -38,7 +41,7 @@ const CommunityPosts = () => {
                             <select value={categoryType} onChange={(e) => setPostCategory(e.target.value)}
                                 className="px-6 py-3 rounded-md bg-slate-900 text-white
                                 border-transparent outline-0 focus:border-gray-500 
-                               text-sm w-fit">
+                                text-sm w-fit min-w-40 text-center">
 
                                 {post.map((item, index) => {
                                     return (
@@ -71,20 +74,30 @@ const CommunityPosts = () => {
                 </div>
             </div>
 
-            {post.filter((obj) => obj.title.toLowerCase().includes(searchkey.toLowerCase()) ||
+            {/* {post.filter((obj) => obj.title.toLowerCase().includes(searchkey.toLowerCase()) ||
                 obj.tags.toLowerCase().includes(searchkey.toLowerCase()))
-                .filter((obj) => obj.category.toLowerCase().includes(categoryType.toLowerCase())).map((postItem, index) => {
+                .filter((obj) => obj.category.toLowerCase()
+                    .includes(categoryType.toLowerCase())).map((postItem, index) => {
+                        return (
+                            <div key={index}>
+                                <Post post={postItem} />
+                            </div>
+                        )
+                    })} */}
 
-                
-                    return (
-                        <div key={index}>
-                            <Post post={postItem}/>
-                        </div>
-                    )
-                })}
+            {(filteredPosts.length > 0) ?
+                (filteredPosts.map((postItem, index) => (
+                    <div key={index}>
+                        <Post post={postItem} />
+                    </div>
+                )))
+                :
+                <h2 className='text-center text-3xl text-white my-10'>Sorry, no posts match your filters..</h2>
+            }
 
         </div>
     )
 }
 
 export default CommunityPosts
+

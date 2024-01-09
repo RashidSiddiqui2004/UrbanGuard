@@ -1,53 +1,19 @@
 
-import React, { useContext, useState } from 'react'
-import { collection, query, where, getDocs } from "firebase/firestore";
+import React, { useContext, useRef, useState } from 'react'
 import myContext from '../../../context/data/myContext';
-import { auth, fireDB } from '../../../firebase/FirebaseConfig';
+import { auth } from '../../../firebase/FirebaseConfig';
+import { Editor } from '@tinymce/tinymce-react';
+import getUsernameByUID from '../../../utils/GetUser';
 
 function AddPost() {
     const context = useContext(myContext);
     const { posts, setPosts, addPost } = context;
-
-    const [desc, setDesc] = useState("");
     
-    const handleDesc = (e) => {
-        setDesc(e.target.value);
-        setPosts({ ...posts, description: e.target.value });
-    };
-
-    // to get the username
-    async function getUsernameByUID(uid) {
-        // Reference to the "users" collection
-        const usersCollection = collection(fireDB, 'users');
-
-        const userQuery = query(usersCollection, where('uid', '==', uid));
-
-        try {
-            const querySnapshot = await getDocs(userQuery);
-
-            if (!querySnapshot.empty) {
-                // Retrieve the first (and hopefully only) document
-                const userDoc = querySnapshot.docs[0];
-                const username = userDoc.data().name;
-                console.log(username);
-                return username;
-            } else {
-                console.log('User not found.');
-            }
-        } catch (error) {
-            console.error('Error fetching user:', error);
-        }
-
-        return null;
-
-    }
-
     let uid;
 
     try {
         uid = auth.currentUser.uid;
     } catch (err) {
-        console.error("error", err);
     }
 
 
@@ -58,10 +24,26 @@ function AddPost() {
             setUser(username);
             posts.authorId = uid;
             posts.author = u_name;
-        } else {
-            console.log(`User with UID ${uid} not found.`);
         }
     });
+
+
+    // Reference to the TinyMCE editor
+    const editorRef2 = useRef(null);
+
+    const uploadPost = async () => {
+        const content = editorRef2.current.getContent();
+        console.log(content);
+
+        // Update state using the state updater function
+        setPosts((prevPosts) => ({ ...prevPosts, description: content }));
+
+        console.log(posts);
+
+        const postUploadstate = await addPost();
+
+        return postUploadstate;
+    }
 
     return (
         <div>
@@ -84,13 +66,26 @@ function AddPost() {
                     </div>
 
                     <div>
-                        <textarea cols="40" rows="10" name='description'
+                        {/* <textarea cols="40" rows="10" name='description'
                             value={posts.description}
                             onChange={handleDesc}
                             className=' bg-gray-600 mb-4 px-2 py-2 w-full inputbox  rounded-lg text-white placeholder:text-gray-200 outline-none'
                             placeholder='Post description..'>
-                        </textarea>
+                        </textarea> */}
+                        <Editor
+                            apiKey='aflhte2kchgwcgg6wo27mxqz79lhro2h443k16fftegeoo6x'
+                            onInit={(evt, editor) => (editorRef2.current = editor)}
+                            init={{
+                                menubar: false,
+                                height: 500,
+                                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                            }}
+                            initialValue="Give report description"
+                        />
                     </div>
+
+                    <></>
 
 
                     <div>
@@ -136,7 +131,7 @@ function AddPost() {
 
                     <div className='flex justify-center mb-3'>
                         <button
-                            onClick={addPost}
+                            onClick={uploadPost}
                             className='  w-full text-black bg-green-300 hover:bg-blue-400 font-bold inputbox px-2 py-2 rounded-lg'>
                             Publish Post to Community
                         </button>

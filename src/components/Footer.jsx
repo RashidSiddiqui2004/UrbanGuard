@@ -9,11 +9,7 @@ const Footer = () => {
           <p className="text-gray-500">Building safer and smarter cities</p>
         </div>
         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-8">
-          <div>
-            <h2 className="text-lg font-bold mb-2">Contact Us</h2>
-            <p>Email: info@urbanguard.com</p>
-            <p>Phone: +1 123-456-7890</p>
-          </div>
+
           <div>
             <h2 className="text-lg font-bold mb-2">Quick Links</h2>
             <ul className="list-none p-0">
@@ -23,6 +19,13 @@ const Footer = () => {
               {/* Add more links as needed */}
             </ul>
           </div>
+
+          <div>
+            <h2 className="text-lg font-bold mb-2">Contact Us</h2>
+            <p>Email: info@urbanguard.com</p>
+            <p>Phone: +1 123-456-7890</p>
+          </div>
+
         </div>
       </div>
       <div className="mt-8 border-t border-gray-800 text-center">

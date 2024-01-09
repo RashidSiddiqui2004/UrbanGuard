@@ -24,9 +24,9 @@ function CommentSection({ postId }) {
         <div className="my-6 mx-[2%]">
             <h2 className="text-2xl font-semibold text-slate-800 underline mb-4 text-center">Comments</h2>
             <div className="space-y-4">
-                {comments.map((comment) => { 
+                {comments.map((comment,index) => { 
                     return (
-                        <div>
+                        <div key={index}>
                             <Comment comment={comment} />
                         </div>
                     )

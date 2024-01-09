@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react'
 import MyContext from './myContext'
 import {
@@ -5,8 +6,8 @@ import {
     onSnapshot, orderBy, query, setDoc, getDoc, updateDoc
 } from 'firebase/firestore';
 import { toast } from 'react-toastify';
-import { fireDB } from '../../firebase/FirebaseConfig';
 import { where } from 'firebase/firestore';
+import { fireDB } from '../../firebase/FirebaseConfig'; 
 
 function myState(props) {
     const [mode, setMode] = useState('light');
@@ -23,6 +24,63 @@ function myState(props) {
     }
 
     const [loading, setLoading] = useState(false);
+
+    const sendReport = async (uid,u_name,incidentType,description,latitude,
+        longitude,imageUrl,anonymousReporting) => {
+
+        const reportsRef = collection(fireDB, 'reports'); // Reference to the reports collection
+
+        // Create a new report document
+
+        // depending on anonymous reporting or not
+        let report;
+
+        if(anonymousReporting === false){
+            report = {
+                uid,
+                u_name,
+                incidentType,
+                description, 
+                latitude,
+                longitude,
+                imageUrl,
+                anonymousReporting:false, 
+                timestamp: new Date(),
+                date: new Date().toLocaleString(
+                    "en-US",
+                    {
+                        month: "short",
+                        day: "2-digit",
+                        year: "numeric",
+                    }
+                )
+            };
+        }
+
+        else{
+            report = {
+                incidentType,
+                description,
+                imageUrl,
+                latitude,
+                longitude,
+                anonymousReporting:true, 
+                timestamp: new Date(),
+                date: new Date().toLocaleString(
+                    "en-US",
+                    {
+                        month: "short",
+                        day: "2-digit",
+                        year: "numeric",
+                    }
+                )
+            };
+        }
+        
+        await setDoc(doc(reportsRef), report);
+
+        return true;
+    }
 
     const [posts, setPosts] = useState({
         title: "",
@@ -60,11 +118,13 @@ function myState(props) {
             await addDoc(postRef, posts)
             toast.success("Added post successfully");
 
-            setTimeout(() => {
-                window.location.href = '/community-posts'
-            }, 800);
+            // setTimeout(() => {
+            //     window.location.href = '/community-posts'
+            // }, 800);
             getPostData();
             setLoading(false)
+
+            return true;
         } catch (error) {
             console.log(error);
             setLoading(false)
@@ -183,13 +243,13 @@ function myState(props) {
                 id: doc.id,
                 ...doc.data(),
             }));
- 
+
             setComments(comments);
 
             return comments;
 
         } catch (error) {
-            console.error('Error fetching comments:', error.message); 
+            console.error('Error fetching comments:', error.message);
         }
 
         return;
@@ -546,12 +606,12 @@ function myState(props) {
     return (
         <MyContext.Provider value={{
             mode, toggleMode, loading, setLoading,
-            posts, setPosts, addPost, post,
+            sendReport, posts, setPosts, addPost, post,
             deletePost, user, profiles, setProfiles, updateProfile,
             asliUpdateProfile,
             userProfile, setUserprofile, addProfile,
             updateProfileAuto, getProfileData, searchkey,
-            setSearchkey, setPostCategory, setPostCategory, categoryType,
+            setSearchkey, setPostCategory, categoryType,
             comments, setComments, writeComment,
             getCommentsForPost, getUserEmail, mail, getReplies,
             replies, setReplies, submitReply

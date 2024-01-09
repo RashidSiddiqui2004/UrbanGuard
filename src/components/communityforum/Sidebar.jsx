@@ -45,9 +45,7 @@ const Sidebar = () => {
         function usernameFunc() {
 
             const cacheCall = localStorage.getItem("username");
-
-            console.log(cacheCall);
-
+ 
             if (cacheCall == null) {
 
                 console.log('cacheCall1');

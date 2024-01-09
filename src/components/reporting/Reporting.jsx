@@ -1,45 +1,141 @@
 
-import React, { useEffect, useState } from 'react'
-// import MyMap from './Maps';
+import React, { useRef, useState } from 'react'
+import MyMap from './Maps';
 import getLocation from "./mapScript";
 import PreviewReport from './PreviewReport';
 
+import myContext from '../../context/data/myContext';
+import { useContext } from 'react';
+import getUsernameByUID from '../../utils/GetUser';
+import { auth, storage } from '../../firebase/FirebaseConfig';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { Editor } from '@tinymce/tinymce-react';
+
+
+
+// Function to upload a file and get its download URL
+const uploadFile = async (file) => {
+    try {
+        // Check if the user is authenticated (you may want to add your authentication logic here)
+        const user = auth.currentUser;
+        if (!user) {
+            throw new Error('User not authenticated');
+        }
+
+        // Create a new Date object
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const hours = currentDate.getHours().toString().padStart(2, '0');
+        const minutes = currentDate.getMinutes().toString().padStart(2, '0');
+        const seconds = currentDate.getSeconds().toString().padStart(2, '0');
+
+        const customFormattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+        // Create a reference to the storage location (e.g., 'images/my-file.jpg')
+        const storageRef = ref(storage, `reports/${file.name}${customFormattedDateTime}`);
+
+        // Upload the file
+        const snapshot = await uploadBytes(storageRef, file);
+
+        // Get the download URL
+        const downloadURL = await getDownloadURL(storageRef);
+
+        // console.log('File uploaded successfully. Download URL:', downloadURL);
+
+        return downloadURL;
+
+    } catch (error) {
+        console.error('Error uploading file:', error.message);
+        // Handle the error as needed in your application
+    }
+};
+
 const Reporting = () => {
 
+    const context = useContext(myContext);
+    const { sendReport } = context;
+
     const [incidentType, setIncidentType] = useState('');
-    const [location, setLocation] = useState('');
+    // const [location, setLocation] = useState('');
     const [description, setDescription] = useState('');
     const [mediaFile, setMediaFile] = useState(null);
     const [latitude, setLatitude] = useState(-1);
     const [longitude, setLongitude] = useState(77);
     const [anonymousReporting, setAnonymousReporting] = useState(false);
 
+    const [imageUrl, setImageUrl] = useState(null);
+
     const [showPreview, setShowPreview] = useState(false);
 
+    const uid = auth?.currentUser?.uid;
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Incident reported:', {
-            incidentType,
-            latitude,
-            longitude,
-            description,
-            mediaFile,
-            anonymousReporting,
-        });
-    };
+    const [u_name, setUser] = useState('');
 
-    const handlePreview = () => {
+    getUsernameByUID(uid).then((username) => {
+        if (username) {
+            setUser(username);
+        } else {
+            console.log(`User with UID ${uid} not found.`);
+        }
+    });
+
+    const handlePreview = async () => {
+
+        const url = await uploadFile(mediaFile);
+
+        const content = editorRef.current.getContent();
+
+        setDescription(content);
+
+        if (!(url === null)) setImageUrl(url);
+
         setShowPreview(true);
     };
 
-    const handleConfirmation = () => {
-        console.log('Report submitted!');
+    // Reference to the TinyMCE editor
+    const editorRef = useRef(null);
+
+    const handleConfirmation = async (e) => {
+        e.preventDefault();
+
+        if (description.trim() === '') return;
+
+        const reportSent = await sendReport(uid, u_name, incidentType, description, latitude, longitude, imageUrl, anonymousReporting);
+
+        if (reportSent) {
+            // if report submitted, redirect to home page & give a toast message 
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+
+            toast.success('Report submitted successfully!', {
+                position: 'top-right',
+                autoClose: 2000, // Close the toast after 2 seconds
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        } else {
+            // error handling
+            toast.error('Error submitting the report. Please try again later.', {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }
     };
-
-    useEffect(() => {
-
-    }, [latitude, longitude]);
+ 
 
     return (
 
@@ -51,24 +147,34 @@ const Reporting = () => {
 
                 <h1 className="text-2xl font-bold mb-4">Report an Incident</h1>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form className="space-y-4">
                     <div>
-                        <label htmlFor="incidentType" className="block text-sm font-medium text-gray-200">
-                            Incident Type
-                        </label>
-                        <select
-                            id="incidentType"
-                            value={incidentType}
-                            onChange={(e) => setIncidentType(e.target.value)}
-                            className="mt-1 p-2 w-full border rounded-md text-slate-700"
-                            required
-                        >
-                            <option value="" disabled>Select an incident type</option>
-                            <option value="Accident">Accident</option>
-                            <option value="Crime">Crime</option>
-                            <option value="InfrastructureIssue">Infrastructure Issue</option>
-                        </select>
+                        <div className="mb-4">
+                            <label htmlFor="incidentType" className="block text-sm font-medium text-gray-200">
+                                Incident Type
+                            </label>
+                            <select
+                                id="incidentType"
+                                value={incidentType}
+                                onChange={(e) => setIncidentType(e.target.value)}
+                                className="mt-1 p-2 w-full border rounded-md text-slate-700 focus:outline-none focus:ring focus:border-blue-300"
+                                required
+                            >
+                                <option value="" disabled>Select an incident type</option>
+                                <option value="Accident">Accident</option>
+                                <option value="Crime">Crime</option>
+                                <option value="Infrastructure Issue">Infrastructure Issue</option>
+                                <option value="Suspicious activities">Suspicious activities</option>
+                                <option value="Cybersecurity Concerns">Cybersecurity Concerns</option>
+                                <option value="Social Issues">Social Issues </option>
+
+                            </select>
+                        </div>
+
                     </div>
+
+
+
 
                     {/* <div>
                         <label htmlFor="location" className="block text-sm font-medium text-gray-600">
@@ -90,7 +196,8 @@ const Reporting = () => {
                             Location
                         </label>
 
-                        <button onClick={() => {
+                        <button onClick={(e) => {
+                            e.preventDefault(); 
                             getLocation()
                                 .then((location) => {
                                     setLatitude(location.latitude);
@@ -99,7 +206,6 @@ const Reporting = () => {
                                 .catch((error) => {
                                     alert(error);
                                 });
-
                         }}
                             className='bg-slate-200 text-slate-950'>Get My Location</button>
 
@@ -110,15 +216,17 @@ const Reporting = () => {
                          text-gray-200 ">
                             Description
                         </label>
-                        <textarea
-                            id="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Provide a detailed description"
-                            rows="4"
-                            className="mt-1 p-2 w-full border rounded-md text-slate-900"
-                            required
-                        ></textarea>
+                        <Editor
+                            apiKey='aflhte2kchgwcgg6wo27mxqz79lhro2h443k16fftegeoo6x'
+                            onInit={(evt, editor) => (editorRef.current = editor)}
+                            init={{
+                                menubar: false,
+                                height: 550,
+                                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                            }}
+                            initialValue="Give report description"
+                        />
                     </div>
 
                     <div>
@@ -165,30 +273,53 @@ const Reporting = () => {
                     Preview Report
                 </button>
 
-                {showPreview && (
-                    <PreviewReport 
-                    reporttype = {incidentType}
-                    latitude={latitude} longitude={longitude} anonymousReporting={anonymousReporting}
-                    description={description} handleConfirmation={handleConfirmation}/>
-                )}
+                {
+                    showPreview && (
+                        <PreviewReport
+                            reporttype={incidentType} imageUrl={imageUrl}
+                            latitude={latitude} longitude={longitude} anonymousReporting={anonymousReporting}
+                            description={description} handleConfirmation={handleConfirmation} />
+                    )
+                }
 
-            </div>
+            </div >
 
 
             <div className='w-[50%] pt-2'>
                 <h2 className='text-xl font-semibold text-center mb-2'>Get your current Location</h2>
 
-                {/* {
-                    (latitude!=-1) ?
-                    <MyMap latitude={latitude} longitude={longitude} />
-                     : ""
-                } */}
+                {
+                    (latitude != -1) ?
+                        <MyMap latitude={latitude} longitude={longitude} />
+                        : ""
+                }
 
             </div>
 
-        </div>
+        </div >
 
     );
 }
 
 export default Reporting
+
+
+// const data = new FormData()
+// data.append("file", mediaFile)
+// data.append("upload_preset", "rashidSid")
+// data.append("cloud_name", "rashidCloud")
+
+// fetch("https://api.cloudinary.com/v1_1/rashidCloud/image/upload", {
+//     method: "post",
+//     headers: {
+//         'Authorization': `Basic ${btoa(`${apiKey}:${apiSecret}`)}`,
+//     },
+//     body: data,
+// }).then((res) => res.json())
+//     .then((result) => {
+//         console.log(result)
+//     }).catch((error) => {
+//         console.log(error);
+//     })
+
+// uploadOnCloudinary(mediaFile);

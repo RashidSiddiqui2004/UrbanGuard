@@ -6,6 +6,7 @@ import myContext from '../../../context/data/myContext';
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import CommentForm from './CommentForm';
 import CommentSection from './CommentSection';
+import RenderHTMLContent from '../../../utils/RenderHTMLContent';
 
 const Post = ({ post }) => {
 
@@ -127,9 +128,13 @@ const Post = ({ post }) => {
 
             {/* Post Description */}
 
-            <p className="text-gray-800 leading-relaxed mb-4">
-                {description}
-            </p>
+            {description ?
+
+                <p className="text-gray-800 leading-relaxed mb-4">
+                    <RenderHTMLContent htmlContent={description} />
+                </p>
+                : ""}
+
 
             {/* Upvotes */}
 
@@ -155,7 +160,7 @@ const Post = ({ post }) => {
                 ))}
 
             </div>
- 
+
 
             <div className="flex flex-row items-center my-4 w-full">
                 {/* <button className="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-6 rounded-l-lg focus:outline-none w-1/2">
@@ -168,7 +173,7 @@ const Post = ({ post }) => {
 
             {userID ? <CommentForm post_id={id} /> : ""}
 
-            <CommentSection postId={id}/>
+            <CommentSection postId={id} />
 
         </div>
 
