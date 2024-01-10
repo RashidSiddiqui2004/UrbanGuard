@@ -3,13 +3,14 @@ import React, { useEffect, useState } from 'react'
 import MyContext from './myContext'
 import {
     Timestamp, addDoc, collection, deleteDoc, doc, getDocs,
-    onSnapshot, orderBy, query, setDoc, getDoc, updateDoc
+    onSnapshot, orderBy, query, setDoc, getDoc, updateDoc,
 } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { where } from 'firebase/firestore';
-import { fireDB } from '../../firebase/FirebaseConfig'; 
+import { fireDB } from '../../firebase/FirebaseConfig';
 
 function myState(props) {
+
     const [mode, setMode] = useState('light');
 
     const toggleMode = () => {
@@ -25,8 +26,8 @@ function myState(props) {
 
     const [loading, setLoading] = useState(false);
 
-    const sendReport = async (uid,u_name,incidentType,description,latitude,
-        longitude,imageUrl,anonymousReporting) => {
+    const sendReport = async (uid, u_name, incidentType, description, latitude,
+        longitude, imageUrl, anonymousReporting) => {
 
         const reportsRef = collection(fireDB, 'reports'); // Reference to the reports collection
 
@@ -35,16 +36,16 @@ function myState(props) {
         // depending on anonymous reporting or not
         let report;
 
-        if(anonymousReporting === false){
+        if (anonymousReporting === false) {
             report = {
                 uid,
                 u_name,
                 incidentType,
-                description, 
+                description,
                 latitude,
                 longitude,
                 imageUrl,
-                anonymousReporting:false, 
+                anonymousReporting: false,
                 timestamp: new Date(),
                 date: new Date().toLocaleString(
                     "en-US",
@@ -57,14 +58,14 @@ function myState(props) {
             };
         }
 
-        else{
+        else {
             report = {
                 incidentType,
                 description,
                 imageUrl,
                 latitude,
                 longitude,
-                anonymousReporting:true, 
+                anonymousReporting: true,
                 timestamp: new Date(),
                 date: new Date().toLocaleString(
                     "en-US",
@@ -76,7 +77,7 @@ function myState(props) {
                 )
             };
         }
-        
+
         await setDoc(doc(reportsRef), report);
 
         return true;
@@ -118,9 +119,9 @@ function myState(props) {
             await addDoc(postRef, posts)
             toast.success("Added post successfully");
 
-            // setTimeout(() => {
-            //     window.location.href = '/community-posts'
-            // }, 800);
+            setTimeout(() => {
+                window.location.href = '/community-posts'
+            }, 800);
             getPostData();
             setLoading(false)
 
@@ -162,10 +163,11 @@ function myState(props) {
 
     useEffect(() => {
         getPostData();
+        getThreads();
     }, []);
 
 
-    // update product function
+    // update post function
     // const updatePost = async () => {
     //     setLoading(true)
     //     try {
@@ -184,7 +186,7 @@ function myState(props) {
     //     }
     // }
 
-    // delete product
+    // delete post
 
     const deletePost = async (item) => {
         setLoading(true)
@@ -196,6 +198,143 @@ function myState(props) {
         } catch (error) {
             console.log(error)
             setLoading(false)
+        }
+    }
+
+    const [thread, setThread] = useState({
+        discussion: "",
+        author: null,
+        authorId: "",
+        likes: 0,
+        dislikes: 0,
+        time: Timestamp.now(),
+        replies: [],
+        date: new Date().toLocaleString(
+            "en-US",
+            {
+                month: "short",
+                day: "2-digit",
+                year: "numeric",
+            }
+        )
+    });
+
+    const addThread = async () => {
+
+        if (thread.discussion == null || thread.authorId == null) {
+            return toast.error("All fields are required")
+        }
+
+        setLoading(true)
+
+        try {
+            const threadRef = collection(fireDB, 'threads');
+            await addDoc(threadRef, thread)
+            toast.success("Added thread successfully");
+
+            setLoading(false)
+
+            return true;
+        } catch (error) {
+            console.log(error);
+            setLoading(false)
+            return false;
+        }
+    }
+
+    const [threads, setThreads] = useState([]);
+
+    const getThreads = async () => {
+        setLoading(true)
+
+        try {
+            const q = query(
+                collection(fireDB, 'threads'),
+                orderBy('time', 'desc')
+            );
+
+            const data = onSnapshot(q, (QuerySnapshot) => {
+                let threadsArray = [];
+                QuerySnapshot.forEach((doc) => {
+                    threadsArray.push({ ...doc.data(), id: doc.id });
+                });
+                setThreads(threadsArray);
+                setLoading(false);
+            });
+
+            return () => data;
+
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
+
+    }
+
+    // get replies on a thread
+
+    const [threadReplies, setThreadReplies] = useState([])
+
+    async function getThreadReplies(threadId) {
+
+        const threadRef = doc(fireDB, 'threads', threadId); // Replace 'threads' with your actual collection name
+
+        try {
+            const threadDoc = await getDoc(threadRef);
+
+            if (threadDoc.exists()) {
+                // Extract thread data from the document
+                const threadData = { id: threadDoc.id, ...threadDoc.data() };
+
+                const threadReplies = threadData.replies;
+
+                setThreadReplies(threadReplies);
+
+                return threadData;
+
+            } else {
+                alert('No such document!');
+                return null;
+            }
+        } catch (error) {
+            return null;
+        }
+    }
+
+    async function replyOnThread(threadId, replyText, u_name) {
+        try {
+            // Get a reference to the thread document
+            const threadRef = doc(fireDB, 'threads', threadId);
+            const threadDoc = await getDoc(threadRef);
+
+            if (threadDoc.exists()) {
+
+                const threadData = { id: threadDoc.id, ...threadDoc.data() };
+
+                const threadReplies = threadData.replies;
+
+                // Retrieve the current state of replies
+                const currentReplies = [...threadReplies];
+
+                // Update the thread document with the new reply
+                await updateDoc(threadRef, {
+                    replies: [...currentReplies, { text: replyText, author: u_name, timestamp: Timestamp.now() }],
+                });
+
+                toast.success("Replied to the thread ✅");
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 800);
+
+            } else {
+                alert('No such document!');
+                return null;
+            }
+
+
+        } catch (error) {
+            console.error('Error adding reply:', error.message);
         }
     }
 
@@ -305,78 +444,6 @@ function myState(props) {
             });
     }
 
-    // challenges
-
-    const [challenges, setChallenges] = useState({
-        title: null,
-        problemStatement: null,
-        author: null,
-        tags: null,
-        submissions: 0,
-        time: Timestamp.now()
-    });
-
-    const addChallenge = async () => {
-
-        if (challenges.title == null) {
-            return toast.error("Title is required..")
-        }
-
-        if (challenges.problemStatement == null) {
-            return toast.error("Challenge is required..");
-        }
-
-        setLoading(true)
-
-        try {
-            const challengeRef = collection(fireDB, 'challenges');
-            await addDoc(challengeRef, challenges)
-            toast.success("Added Challenge Successfully");
-            setTimeout(() => {
-                window.location.href = '/challenges'
-            }, 800);
-            getChallengeData();
-            setLoading(false)
-        } catch (error) {
-            console.log(error);
-            setLoading(false)
-        }
-    }
-
-    const [challenge, setChallenge] = useState([]);
-
-    const getChallengeData = async () => {
-
-        setLoading(true)
-
-        try {
-            const q = query(
-                collection(fireDB, 'challenges'),
-                orderBy('time')
-            );
-
-            const data = onSnapshot(q, (QuerySnapshot) => {
-                let chlgArray = [];
-                QuerySnapshot.forEach((doc) => {
-                    chlgArray.push({ ...doc.data(), id: doc.id });
-                });
-                setChallenge(chlgArray);
-                setLoading(false);
-            });
-
-            return () => data;
-
-        } catch (error) {
-            console.log(error)
-            setLoading(false)
-        }
-
-    }
-
-    useEffect(() => {
-        getChallengeData();
-    }, []);
-
 
     const [user, setUser] = useState([]);
 
@@ -483,11 +550,7 @@ function myState(props) {
         email: "",
         phoneNo: null,
         imageUrl: null,
-        // prefereces
-        favdestinations: [],
-        preferredActivities: [],
         country: "India",
-        badge: "Beginner",
         followers: 0,
         followings: 0,
         time: Timestamp.now()
@@ -530,45 +593,6 @@ function myState(props) {
         }
     }
 
-    const updateProfileAuto = async () => {
-
-        if (profiles.email == null || profiles.fullname == null || profiles.userid == null) {
-            return toast.error("All fields are required")
-        }
-
-        setLoading(true)
-
-        try {
-            const profileRef = collection(fireDB, 'profiles');
-            await addDoc(profileRef, profiles)
-            toast.success("Updated profile successfully");
-            setLoading(false)
-        } catch (error) {
-            console.log(error);
-            setLoading(false)
-        }
-    }
-
-
-    const asliUpdateProfile = async () => {
-        setLoading(true);
-
-        try {
-            const profileRef = doc(fireDB, 'profiles', [profiles.curr_id]);
-            await updateDoc(profileRef, profiles);
-
-            toast.success("Profile updated successfully");
-            setTimeout(() => {
-                window.location.href = '/userprofile';
-            }, 800);
-            setLoading(false);
-        } catch (error) {
-            console.log(error);
-            setLoading(false);
-        }
-
-    };
-
     const [userProfile, setUserprofile] = useState([]);
 
     const getProfileData = async (userid) => {
@@ -608,13 +632,14 @@ function myState(props) {
             mode, toggleMode, loading, setLoading,
             sendReport, posts, setPosts, addPost, post,
             deletePost, user, profiles, setProfiles, updateProfile,
-            asliUpdateProfile,
             userProfile, setUserprofile, addProfile,
-            updateProfileAuto, getProfileData, searchkey,
+            getProfileData, searchkey,
             setSearchkey, setPostCategory, categoryType,
             comments, setComments, writeComment,
             getCommentsForPost, getUserEmail, mail, getReplies,
-            replies, setReplies, submitReply
+            replies, setReplies, submitReply,
+            addThread, setThread, thread, threads, getThreads,
+            threadReplies, setThreadReplies, getThreadReplies, replyOnThread,
         }}>
             {props.children}
         </MyContext.Provider>

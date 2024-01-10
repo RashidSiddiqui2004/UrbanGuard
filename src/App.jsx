@@ -21,6 +21,8 @@ import AddPost from './components/communityforum/communityPosts/AddPost';
 import NoPage from './components/nopage/NoPage';
 import EmergencyResources from './components/emergencyResources/EmergencyResources';
 import Navbar from './components/Navbar';
+import CommunityDiscussions from './components/communityforum/discussion-forum/CommunityDiscussions';
+import DiscussionReply from './components/communityforum/discussion-forum/DiscussionReply';
 
 function App() {
   return (
@@ -70,7 +72,15 @@ function App() {
           <Route path="/community-discussion" element={
             <ProtectedRoute>
               <Layout>
-                <SafetyTips />
+                <CommunityDiscussions />
+              </Layout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/thread-reply/:id" element={
+            <ProtectedRoute>
+              <Layout>
+                <DiscussionReply />
               </Layout>
             </ProtectedRoute>
           } />

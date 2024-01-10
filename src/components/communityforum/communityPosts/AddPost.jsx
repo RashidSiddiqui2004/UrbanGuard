@@ -4,11 +4,26 @@ import myContext from '../../../context/data/myContext';
 import { auth } from '../../../firebase/FirebaseConfig';
 import { Editor } from '@tinymce/tinymce-react';
 import getUsernameByUID from '../../../utils/GetUser';
+import { uploadFile } from '../../../utils/UploadFile';
 
 function AddPost() {
     const context = useContext(myContext);
     const { posts, setPosts, addPost } = context;
-    
+
+    const [useImageUrl, setUseImageUrl] = useState(false);
+    const [imageFile, setImageFile] = useState(null);
+
+    const handleCheckboxChange = () => {
+        setUseImageUrl(!useImageUrl);
+    };
+
+    const handleImageFileChange = (e) => {
+        const file = e.target.files[0];
+        console.log(file);
+        setImageFile(file);
+    };
+
+
     let uid;
 
     try {
@@ -31,19 +46,45 @@ function AddPost() {
     // Reference to the TinyMCE editor
     const editorRef2 = useRef(null);
 
+    const uploadNewpost = async () => {
+        const postUploadstate = await addPost();
+        return postUploadstate;
+    }
+
     const uploadPost = async () => {
-        const content = editorRef2.current.getContent();
-        console.log(content);
+        const content = await editorRef2.current.getContent();
 
         // Update state using the state updater function
         setPosts((prevPosts) => ({ ...prevPosts, description: content }));
 
+        if (!(imageFile == null)) {
+            try {
+                const imageUrlfromFB = await uploadFile(imageFile)
+
+                // Update state with the image URL
+                if (imageUrlfromFB !== null) {
+                    setPosts((prevPosts) => ({ ...prevPosts, imageUrl: imageUrlfromFB }));
+                }
+
+                setTimeout(() => {
+                    uploadNewpost();
+                }, 2000);
+
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
+        }
+
+        else {
+            setTimeout(() => {
+                uploadNewpost();
+            }, 2000);
+        }
+
         console.log(posts);
 
-        const postUploadstate = await addPost();
+    };
 
-        return postUploadstate;
-    }
 
     return (
         <div>
@@ -55,6 +96,8 @@ function AddPost() {
                         <span className='-my-3'><img src="addpost.png" alt="New Post" width={50} srcSet="" /></span>
                     </div>
 
+
+                    {/* title */}
                     <div>
                         <input type="text"
                             value={posts.title}
@@ -65,13 +108,9 @@ function AddPost() {
                         />
                     </div>
 
+
+                    {/* editor */}
                     <div>
-                        {/* <textarea cols="40" rows="10" name='description'
-                            value={posts.description}
-                            onChange={handleDesc}
-                            className=' bg-gray-600 mb-4 px-2 py-2 w-full inputbox  rounded-lg text-white placeholder:text-gray-200 outline-none'
-                            placeholder='Post description..'>
-                        </textarea> */}
                         <Editor
                             apiKey='aflhte2kchgwcgg6wo27mxqz79lhro2h443k16fftegeoo6x'
                             onInit={(evt, editor) => (editorRef2.current = editor)}
@@ -81,14 +120,12 @@ function AddPost() {
                                 plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
                                 toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
                             }}
-                            initialValue="Give report description"
+                            initialValue="Post Description"
                         />
                     </div>
 
-                    <></>
 
-
-                    <div>
+                    {/* <div>
                         <input type="text"
                             value={posts.imageUrl}
                             onChange={(e) => setPosts({ ...posts, imageUrl: e.target.value })}
@@ -96,7 +133,68 @@ function AddPost() {
                             className=' bg-gray-600 mb-4 px-2 py-3 my-2 w-full  rounded-lg inputbox text-white placeholder:text-gray-200 outline-none'
                             placeholder='Add an Image Url'
                         />
+                    </div> */}
+
+                    <div className='mt-6'>
+
+                        <div className='flex flex-row gap-6'>
+                            {!useImageUrl ? (
+                                <div>
+                                    <label htmlFor="imageUrl"
+                                        className="block text-sm mt-2 font-medium text-gray-200 mb-3">
+                                        Want to upload Image URL
+                                    </label>
+
+                                </div>
+                            ) : (
+                                <div>
+                                    <label htmlFor="imageFile"
+                                        className="block text-sm mt-2 font-medium text-gray-200 mb-3">
+                                        Want to upload Image File
+                                    </label>
+
+                                </div>
+                            )}
+
+                            <input
+                                type="checkbox"
+                                id="useImageUrl"
+                                checked={useImageUrl}
+                                onChange={handleCheckboxChange}
+                                className="mr-2 px-11 py-11 transform scale-150"
+                            />
+                        </div>
+
+
+                        {useImageUrl ? (
+                            <div>
+                                <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-200 mb-3">
+                                    Image URL
+                                </label>
+                                <input type="text"
+                                    value={posts.imageUrl}
+                                    onChange={(e) => setPosts({ ...posts, imageUrl: e.target.value })}
+                                    name='imageurl'
+                                    className=' bg-gray-600 mb-4 px-2 py-3 my-2 w-full  rounded-lg inputbox text-white placeholder:text-gray-200 outline-none'
+                                    placeholder='Add an Image Url'
+                                />
+                            </div>
+                        ) : (
+                            <div>
+                                <label htmlFor="imageFile" className="block text-sm font-medium text-gray-200 mb-3">
+                                    Upload Image
+                                </label>
+                                <input
+                                    type="file"
+                                    id="imageFile"
+                                    accept="image/*"
+                                    onChange={handleImageFileChange}
+                                    className="bg-gray-600 mb-4 px-2 py-3 my-2 w-full rounded-lg text-white placeholder:text-gray-200 outline-none"
+                                />
+                            </div>
+                        )}
                     </div>
+
 
                     <div>
                         <input type="text"

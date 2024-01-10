@@ -140,7 +140,7 @@ const Sidebar = () => {
                 </Link>
             </div>
 
-            <div
+            {/* <div
                 initial={{ x: -200 }}
                 animate={{ x: 0 }}
                 transition={{
@@ -150,7 +150,16 @@ const Sidebar = () => {
                 <Link to={'/community-qna'}>
                     <h3 className='text-center text-2xl text-white'> Q & A</h3>
                 </Link>
+            </div> */}
+
+
+            <div className='justify-center text-slate-900 
+            font-bold my-12 font-serif'>
+                <h2 className='text-center text-2xl'> &copy; {new Date().getFullYear()} Urban Guard</h2>
+                <h2 className='text-center text-lg'>All rights reserved</h2>
             </div>
+
+
         </div>
 
     )

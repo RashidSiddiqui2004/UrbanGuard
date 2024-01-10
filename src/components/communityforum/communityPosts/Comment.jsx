@@ -1,16 +1,13 @@
 
 import React from 'react' 
-// import { doc, setDoc } from 'firebase/firestore';
-// import { toast } from 'react-toastify';
-// import { fireDB } from '../../../firebase/FirebaseConfig';
 
-const Comment = ({ comment }) => { 
+const Comment = ({ comment }) => {
 
     // like a comment 
     // const likeComment = async (commentId) => {
-    
+
     //     const likeRef = doc(fireDB, 'comments', `${commentId}`);
-     
+
     //     let condition = isNaN(commentData.likes) || (commentData.hasOwnProperty('likes')==false);
 
     //     if(condition===false){
@@ -36,7 +33,7 @@ const Comment = ({ comment }) => {
     //             ...commentData,
     //             likes: updatedVotes,
     //         };
- 
+
     //         setCommentData(updatedPost);
     //         toast.success('1st like👍');
     //         await setDoc(likeRef, updatedPost );
@@ -60,8 +57,14 @@ const Comment = ({ comment }) => {
                 <span className="font-semibold text-gray-700">{comment.username}</span>
             </div>
             <p className="text-gray-800 mt-2">{comment.comment}</p>
+        </div>
+    )
+}
 
-            {/* <div className='flex flex-row'>
+export default Comment
+
+
+{/* <div className='flex flex-row'>
                 <button className='bg-green-200 my-2 px-2 py-1 rounded-md'
                     onClick={() => { likeComment(commentData.id) }}>Like</button>
                 <span className='bg-red-200 rounded-md mx-2 my-2 px-2 py-1'>{commentData.hasOwnProperty('likes') ? commentData.likes : 0} Likes</span>
@@ -69,9 +72,3 @@ const Comment = ({ comment }) => {
                 <button className='bg-gray-600 text-white my-2 px-2 py-1 rounded-md'
                 onClick={replyToComment}>Reply</button>
             </div> */}
-
-        </div>
-    )
-}
-
-export default Comment

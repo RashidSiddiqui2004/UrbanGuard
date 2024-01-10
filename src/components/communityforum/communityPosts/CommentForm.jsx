@@ -11,8 +11,7 @@ const CommentForm = ({ post_id }) => {
 
   const context = useContext(myContext);
   const { writeComment } = context;
-
-
+  
   const uid = auth?.currentUser?.uid;
 
   const [u_name, setUser] = useState('');
