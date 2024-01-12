@@ -2,9 +2,10 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 
+
 const Hero = () => {
     return (
-        <div className='text-center min-h-[500px] mt-20'>
+        <div className='text-center min-h-[300px] mt-20 merriweather'>
 
             <motion.h1
                 initial={{ x: -1000 }}
@@ -13,7 +14,7 @@ const Hero = () => {
                     duration: 1,
                     delay: 0.2,
                 }}
-                className='flex justify-center my-2 text-xl md:text-6xl font-bold'>"Empower 
+                className='flex justify-center my-2 text-lg md:text-6xl font-bold'>"Empower 
                 <span className='text-green-400 mx-2'> Safety</span> , Report
                 <span className='text-pink-400 mx-2'> Incidents. </span> </motion.h1>
 

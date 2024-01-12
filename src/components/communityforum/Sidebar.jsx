@@ -45,7 +45,7 @@ const Sidebar = () => {
         function usernameFunc() {
 
             const cacheCall = localStorage.getItem("username");
- 
+
             if (cacheCall == null) {
 
                 console.log('cacheCall1');
@@ -77,8 +77,8 @@ const Sidebar = () => {
             <Link to={'/'}>
                 <h2 className='text-md lg:text-xl mt-4 text-slate-800 
         text-center font-bold my-5'>Urban Guard</h2>
-            </Link> 
-            
+            </Link>
+
             <div
                 className='bg-slate-800 py-3 px-4 mx-6 rounded-lg my-3 shadow-md
                  shadow-purple-600 hover:scale-95 transition-all'>
@@ -128,7 +128,7 @@ const Sidebar = () => {
                 </Link>
             </div>
 
-            <div
+            {/* <div
                 initial={{ x: -200 }}
                 animate={{ x: 0 }}
                 transition={{
@@ -138,7 +138,7 @@ const Sidebar = () => {
                 <Link to={'/community-events'}>
                     <h3 className='text-center text-2xl text-white'>Community Events</h3>
                 </Link>
-            </div>
+            </div> */}
 
             {/* <div
                 initial={{ x: -200 }}
@@ -153,10 +153,23 @@ const Sidebar = () => {
             </div> */}
 
 
-            <div className='justify-center text-slate-900 
-            font-bold my-12 font-serif'>
-                <h2 className='text-center text-2xl'> &copy; {new Date().getFullYear()} Urban Guard</h2>
-                <h2 className='text-center text-lg'>All rights reserved</h2>
+            <div className="flex flex-col items-center merriweather justify-between h-full bg-gray-800 text-white p-4">
+                <div className="mb-6">
+                    <img src="logo.jpg" alt="Urban Guard Logo" 
+                    className="w-12 h-12 rounded-full mb-2 ml-10" />
+                    <h1 className="text-xl font-semibold">Urban Guard</h1>
+                </div>
+ 
+                <nav className="space-y-4">
+                    <a href="/" className="block text-sm">Home</a>
+                    <a href="/report" className="block text-sm">Incident Reports</a>
+                    <a href="/emergency-resources" className="block text-sm">Resources</a> 
+                </nav>
+ 
+                <div className="text-center mt-6">
+                    <p className="text-sm mb-2">Contact us: contact@urbanguard.com</p>
+                    <p className="text-xs">&copy; {new Date().getFullYear()} Urban Guard. All rights reserved.</p>
+                </div>
             </div>
 
 

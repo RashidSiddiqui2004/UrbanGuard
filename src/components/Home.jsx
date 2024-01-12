@@ -5,6 +5,7 @@ import Hero from './Hero'
 import Features from './features/Features'
 import CommunityForumPoster from './posters/CommunityForumPoster'
 import Footer from './Footer'
+import "./styles.css"
 
 const Home = () => {
     return (

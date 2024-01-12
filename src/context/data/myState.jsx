@@ -93,9 +93,8 @@ function myState(props) {
         imageUrl: null,
         tags: null,
         likes: 0,
-        dislikes: 0,
+        supports: 0,
         time: Timestamp.now(),
-        comments: [],
         date: new Date().toLocaleString(
             "en-US",
             {
@@ -122,7 +121,9 @@ function myState(props) {
             setTimeout(() => {
                 window.location.href = '/community-posts'
             }, 800);
+
             getPostData();
+
             setLoading(false)
 
             return true;
@@ -166,6 +167,35 @@ function myState(props) {
         getThreads();
     }, []);
 
+    const [myposts, setMyPosts] = useState([]);
+
+    const getMyPosts = async (userID) => {
+        setLoading(true)
+
+        try {
+            const q = query(
+                collection(fireDB, 'posts'),
+                where('authorId', '==', userID),
+                orderBy('time', 'desc')
+            );
+
+            const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
+                let myPostArray = [];
+                QuerySnapshot.forEach((doc) => {
+                    myPostArray.push({ ...doc.data(), id: doc.id });
+                });
+                setMyPosts(myPostArray);
+
+                setLoading(false);
+            });
+
+            return () => unsubscribe();
+        } catch (error) {
+            let myPostArray = [];
+            setMyPosts(myPostArray);
+            setLoading(false);
+        }
+    }
 
     // update post function
     // const updatePost = async () => {
@@ -200,6 +230,116 @@ function myState(props) {
             setLoading(false)
         }
     }
+
+
+    const followUser = async (followerId, followingId, followingUsername) => {
+        try {
+
+            if(followerId == followingId){
+                toast.error(`You can't follow yourself!`);
+                return false;
+            }
+
+            const followingsQuery = query(
+                collection(fireDB, 'followings'),
+                where('follower', '==', followerId),
+                where('following', '==', followingId)
+            );
+
+            const followingsSnapshot = await getDocs(followingsQuery);
+
+            if (!followingsSnapshot.empty) { 
+                toast.info(`You are already following ${followingUsername}`);
+                return false;
+            }
+
+            const followingsCollection = collection(fireDB, 'followings');
+
+            const followingsDocRef = await addDoc(followingsCollection, {
+                follower: followerId,
+                following: followingId,
+                time: Timestamp.now(),
+                date: new Date().toLocaleString(
+                    "en-US",
+                    {
+                        month: "short",
+                        day: "2-digit",
+                        year: "numeric",
+                    }
+                )
+            });
+
+            if (followingsDocRef) {
+                toast.success(`You are now following ${followingUsername}`);
+
+                return true;
+            }
+
+        } catch (error) {
+            console.error('Error following user:', error.message);
+            return false;
+        }
+    };
+
+
+    const getUserDetails = async (userId) => {
+
+        const postsQuery = query(collection(fireDB, 'posts'), where('authorId', '==', userId));
+        const postsSnapshot = await getDocs(postsQuery);
+
+        const postsCount = postsSnapshot.size;
+
+        // Get the comments count on the website
+        const commentsQuery = query(collection(fireDB, 'comments'), where('user_id', '==', userId));
+        const commentsSnapshot = await getDocs(commentsQuery);
+        const commentsCount = commentsSnapshot.size;
+
+        // Get the likes count on user's posts
+        const postsLikesQuery = query(collection(fireDB, 'posts'), where('authorId', '==', userId));
+        const postslikesSnapshot = await getDocs(postsLikesQuery);
+
+        let totalLikes = 0;
+
+        // Iterate through each post
+        postslikesSnapshot.forEach((postDoc) => {
+            const postData = postDoc.data();
+
+            // If 'likes' field exists and is a number, add it to totalLikes
+            if (postData.likes && typeof postData.likes === 'number') {
+                totalLikes += postData.likes;
+            }
+        });
+
+        const likesCount = totalLikes;
+
+        // Get the comments count on user's posts
+        const postCommentsQuery = query(collection(fireDB, 'comments'), where('authorId', '==', userId));
+        const postCommentsSnapshot = await getDocs(postCommentsQuery);
+        const postCommentsCount = postCommentsSnapshot.size;
+
+        // Get the followers count
+        const followersQuery = query(collection(fireDB, 'followings'), where('following', '==', userId));
+        const followersSnapshot = await getDocs(followersQuery);
+        const followersCount = followersSnapshot.size;
+
+        // Get the followings count
+        const followingsQuery = query(collection(fireDB, 'followings'), where('follower', '==', userId));
+        const followingsSnapshot = await getDocs(followingsQuery);
+        const followingsCount = followingsSnapshot.size;
+
+        // Set the user details
+        const metadata = {
+            postsCount,
+            commentsCount,
+            likesCount,
+            postCommentsCount,
+            followersCount,
+            followingsCount,
+        };
+
+        return metadata;
+    };
+
 
     const [thread, setThread] = useState({
         discussion: "",
@@ -631,6 +771,7 @@ function myState(props) {
         <MyContext.Provider value={{
             mode, toggleMode, loading, setLoading,
             sendReport, posts, setPosts, addPost, post,
+            myposts, getMyPosts,
             deletePost, user, profiles, setProfiles, updateProfile,
             userProfile, setUserprofile, addProfile,
             getProfileData, searchkey,
@@ -640,6 +781,7 @@ function myState(props) {
             replies, setReplies, submitReply,
             addThread, setThread, thread, threads, getThreads,
             threadReplies, setThreadReplies, getThreadReplies, replyOnThread,
+            getUserDetails, followUser,
         }}>
             {props.children}
         </MyContext.Provider>

@@ -5,6 +5,7 @@ import { auth } from '../../../firebase/FirebaseConfig';
 import { Editor } from '@tinymce/tinymce-react';
 import getUsernameByUID from '../../../utils/GetUser';
 import { uploadFile } from '../../../utils/UploadFile';
+import PostPreview from './PostPreview';
 
 function AddPost() {
     const context = useContext(myContext);
@@ -12,6 +13,8 @@ function AddPost() {
 
     const [useImageUrl, setUseImageUrl] = useState(false);
     const [imageFile, setImageFile] = useState(null);
+
+    const [postPreview, setPostPreview] = useState(false);
 
     const handleCheckboxChange = () => {
         setUseImageUrl(!useImageUrl);
@@ -46,12 +49,8 @@ function AddPost() {
     // Reference to the TinyMCE editor
     const editorRef2 = useRef(null);
 
-    const uploadNewpost = async () => {
-        const postUploadstate = await addPost();
-        return postUploadstate;
-    }
+    const handlePreview = async () => {
 
-    const uploadPost = async () => {
         const content = await editorRef2.current.getContent();
 
         // Update state using the state updater function
@@ -66,25 +65,21 @@ function AddPost() {
                     setPosts((prevPosts) => ({ ...prevPosts, imageUrl: imageUrlfromFB }));
                 }
 
-                setTimeout(() => {
-                    uploadNewpost();
-                }, 2000);
-
             } catch (error) {
                 console.error('Error uploading image:', error);
             }
         }
 
-        else {
-            setTimeout(() => {
-                uploadNewpost();
-            }, 2000);
-        }
-
-        console.log(posts);
-
+        setPostPreview(true);
     };
 
+
+
+    const uploadPost = async () => {
+        const postUploadstate = await addPost();
+
+        return postUploadstate;
+    }
 
     return (
         <div>
@@ -229,15 +224,34 @@ function AddPost() {
 
                     <div className='flex justify-center mb-3'>
                         <button
-                            onClick={uploadPost}
+                            onClick={handlePreview}
                             className='  w-full text-black bg-green-300 hover:bg-blue-400 font-bold inputbox px-2 py-2 rounded-lg'>
-                            Publish Post to Community
+                            Get Post Preview
                         </button>
                     </div>
 
+                    {postPreview && (
+                        <PostPreview posts={posts} />
+                    )}
+
+                    {postPreview && (
+
+                        <div className='flex justify-center mb-3 mt-7'>
+                            <button
+                                onClick={uploadPost}
+                                className='w-full text-slate-950 bg-blue-400 text-lg
+                                hover:bg-blue-400 font-bold inputbox px-2 py-2 rounded-lg'
+                            >
+                                Publish Post to Community
+                            </button>
+                        </div>
+                    )}
+
+
+
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

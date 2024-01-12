@@ -5,7 +5,7 @@ const DisasterManager = ({ disaster }) => {
     return (
         <div className='bg-white rounded-2xl hover:bg-gray-300 transition-all'>
 
-            <img src={disaster.image} alt="" srcset="" className='h-[400px] w-full rounded-xl'/>
+            <img src={disaster.image} alt="" srcSet="" className='h-[400px] w-full rounded-xl'/>
 
             <div className='p-4'>
                 <h2 className='text-xl font-bold mb-2 text-slate-900'>{disaster.title}</h2>

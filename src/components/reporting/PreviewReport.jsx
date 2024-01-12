@@ -38,7 +38,7 @@ const PreviewReport = ({ reporttype, description, latitude, longitude, anonymous
                     </div>
 
                     <img src={imageUrl} alt="Report media uploaded"
-                        className='w-[60%] text-center mx-[20%] py-3 rounded-xl' srcset="" />
+                        className='w-[60%] text-center mx-[20%] py-3 rounded-xl' srcSet="" />
                 </div>
 
 

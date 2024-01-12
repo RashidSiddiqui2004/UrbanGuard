@@ -167,7 +167,7 @@ function Navbar() {
                   </a>
                 </div>
 
-                <Link to={'/userProfile'}>
+                <Link to={'/user-profile'}>
                   <div className="hidden lg:ml-8 lg:flex">
                     <a href="#" className="flex items-center text-gray-700 ">
                       <img

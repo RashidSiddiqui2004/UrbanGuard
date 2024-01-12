@@ -18,19 +18,25 @@ function CommentSection({ postId }) {
         }
 
         fetchComments();
-    }, []); 
+    }, []);
 
     return (
         <div className="my-6 mx-[2%]">
             <h2 className="text-2xl font-semibold text-slate-800 underline mb-4 text-center">Comments</h2>
             <div className="space-y-4">
-                {comments.map((comment,index) => { 
-                    return (
-                        <div key={index}>
-                            <Comment comment={comment} />
-                        </div>
-                    )
-                })}
+              
+                {(comments.length > 0) ?
+                    comments.map((comment, index) => {
+                        return (
+                            <div key={index}>
+                                <Comment comment={comment} />
+                            </div>
+                        )
+                    })
+                    :
+                    <h3 className='text-center text-xl text-slate-800 my-10'>Be the first one to comment..</h3>
+                }
+
             </div>
         </div>
     );

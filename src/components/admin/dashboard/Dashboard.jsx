@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
-// import {FaUserTie } from 'react-icons/fa';
+import React, { useContext, useEffect, useState } from 'react' 
 
-import { FaUserTie, FaClipboardList, FaUsers, FaWpforms } from 'react-icons/fa';
+import { FaUsers, FaWpforms } from 'react-icons/fa';
 
 import myContext from '../../../context/data/myContext';
 import Layout from '../../../components/layout/Layout';
@@ -72,19 +71,7 @@ function Dashboard() {
                                 <p className="text-purple-500 font-bold">Total Posts</p>
                             </div>
                         </div>
-
-                        <div className="p-4 md:w-1/3 sm:w-1/2 w-full">
-                            <div className="border-2 hover:shadow-purple-600 shadow-md bg-gray-100 border-gray-300 px-4 py-3 rounded-xl dark:bg-gray-800 dark:text-white">
-                                <div className="text-purple-500 w-12 h-12 mb-3 inline-block">
-                                    <FaClipboardList size={50} />
-                                </div>
-                                <h2 className="text-3xl text-black font-semibold fonts1">
-                                    {numChallenges}
-                                </h2>
-                                <p className="text-purple-500 font-bold">Total Challenges</p>
-                            </div>
-                        </div>
-
+ 
                         <div className="p-4 md:w-1/3 sm:w-1/2 w-full">
                             <div className="border-2 hover:shadow-purple-600 shadow-md bg-gray-100 border-gray-300 px-4 py-3 rounded-xl dark:bg-gray-800 dark:text-white">
                                 <div className="text-purple-500 w-12 h-12 mb-3 inline-block">

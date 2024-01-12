@@ -7,14 +7,14 @@ import PreviewReport from './PreviewReport';
 import myContext from '../../context/data/myContext';
 import { useContext } from 'react';
 import getUsernameByUID from '../../utils/GetUser';
-import { auth} from '../../firebase/FirebaseConfig'; 
+import { auth } from '../../firebase/FirebaseConfig';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Editor } from '@tinymce/tinymce-react';
 import { uploadFile } from '../../utils/UploadFile';
- 
+
 
 const Reporting = () => {
 
@@ -95,19 +95,20 @@ const Reporting = () => {
             });
         }
     };
- 
+
 
     return (
 
-        <div className='md:flex md:flex-row' id='container'>
+        <div className='lg:flex lg:flex-row' id='container'>
 
-            <div className="w-[50%] mx-auto mt-1 p-6 rounded-md">
+            <div className="w-[50%] mx-[6%] lg:mx-auto mt-1 p-6 rounded-md">
 
                 <h1 className='text-2xl mb-3 font-bold font-serif'>UrbanGuard</h1>
 
-                <h1 className="text-2xl font-bold mb-4">Report an Incident</h1>
+                <h1 className="text-lg lg:text-2xl font-bold mb-4">Report an Incident</h1>
 
                 <form className="space-y-4">
+
                     <div>
                         <div className="mb-4">
                             <label htmlFor="incidentType" className="block text-sm font-medium text-gray-200">
@@ -117,7 +118,8 @@ const Reporting = () => {
                                 id="incidentType"
                                 value={incidentType}
                                 onChange={(e) => setIncidentType(e.target.value)}
-                                className="mt-1 p-2 w-full border rounded-md text-slate-700 focus:outline-none focus:ring focus:border-blue-300"
+                                className="mt-1 p-2 w-full border rounded-md text-slate-700 
+                                focus:outline-none focus:ring focus:border-blue-300 text-sm lg:text-lg"
                                 required
                             >
                                 <option value="" disabled>Select an incident type</option>
@@ -134,30 +136,14 @@ const Reporting = () => {
                     </div>
 
 
-
-
-                    {/* <div>
-                        <label htmlFor="location" className="block text-sm font-medium text-gray-600">
-                            Location
-                        </label>
-                        <input
-                            type="text"
-                            id="location"
-                            value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                            placeholder="Enter incident location"
-                            className="mt-1 p-2 w-full border rounded-md text-slate-900"
-                            required
-                        />
-                    </div> */}
-
+                    {/* location */}
                     <div>
                         <label htmlFor="location" className="block text-sm font-medium text-gray-200 mb-3">
                             Location
                         </label>
 
                         <button onClick={(e) => {
-                            e.preventDefault(); 
+                            e.preventDefault();
                             getLocation()
                                 .then((location) => {
                                     setLatitude(location.latitude);
@@ -167,26 +153,47 @@ const Reporting = () => {
                                     alert(error);
                                 });
                         }}
-                            className='bg-slate-200 text-slate-950'>Get My Location</button>
+                            className='bg-slate-200 text-slate-950 text-sm lg:text-xl'>Get My Location</button>
 
                     </div>
 
+                    {/* Description */}
                     <div>
                         <label htmlFor="description" className="block text-sm font-medium
-                         text-gray-200 ">
+                         text-gray-200 mb-2">
                             Description
                         </label>
-                        <Editor
-                            apiKey='aflhte2kchgwcgg6wo27mxqz79lhro2h443k16fftegeoo6x'
-                            onInit={(evt, editor) => (editorRef.current = editor)}
-                            init={{
-                                menubar: false,
-                                height: 550,
-                                plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-                                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-                            }}
-                            initialValue="Give report description"
-                        />
+
+                        
+                        <div className='block lg:hidden'>
+                            <Editor
+                                apiKey='aflhte2kchgwcgg6wo27mxqz79lhro2h443k16fftegeoo6x'
+                                onInit={(evt, editor) => (editorRef.current = editor)}
+                                init={{
+                                    menubar: false,
+                                    height: 550,
+                                    width:220,
+                                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                                }}
+                                initialValue="Give report description"
+                            />
+                        </div>
+
+                        <div className='hidden lg:block'>
+                            <Editor
+                                apiKey='aflhte2kchgwcgg6wo27mxqz79lhro2h443k16fftegeoo6x'
+                                onInit={(evt, editor) => (editorRef.current = editor)}
+                                init={{
+                                    menubar: false,
+                                    height: 550,
+                                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                                }}
+                                initialValue="Give report description"
+                            />
+                        </div>
+
                     </div>
 
                     <div>
@@ -221,11 +228,6 @@ const Reporting = () => {
                             </h2>
                             : ""
                     }
-
-                    {/* <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                        Submit Report
-                    </button> */}
-
                 </form>
 
 

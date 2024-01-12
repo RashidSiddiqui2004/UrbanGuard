@@ -23,6 +23,7 @@ import EmergencyResources from './components/emergencyResources/EmergencyResourc
 import Navbar from './components/Navbar';
 import CommunityDiscussions from './components/communityforum/discussion-forum/CommunityDiscussions';
 import DiscussionReply from './components/communityforum/discussion-forum/DiscussionReply';
+import UserProfile from './components/userprofile/UserProfile';
 
 function App() {
   return (
@@ -45,6 +46,15 @@ function App() {
 
           } />
 
+          <Route path="/user-profile" element={
+            <ProtectedRoute>
+              <Layout>
+                <UserProfile />
+              </Layout>
+            </ProtectedRoute>
+          } />
+
+
           <Route path="/community-forum-intro" element={
             <ProtectedRoute>
               <Layout>
@@ -52,6 +62,7 @@ function App() {
               </Layout>
             </ProtectedRoute>
           } />
+
 
           <Route path="/add-post" element={
             <ProtectedRoute>
@@ -120,12 +131,7 @@ function App() {
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
 
-          {/* <Route path="/userprofile" element={
-            <ProtectedRoute>
-              <UserProfile />
-            </ProtectedRoute>
-          } /> */}
-
+    
           {/* <Route path='/about' element={<AboutUsPage />} /> */}
 
           <Route path="/*" element={<NoPage />} />

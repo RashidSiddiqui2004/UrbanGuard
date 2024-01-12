@@ -10,13 +10,14 @@ import RenderHTMLContent from '../../../utils/RenderHTMLContent';
 
 const Post = ({ post }) => {
 
-    const { title, tags, description, imageUrl, id, category,
+    const { title, tags, description, imageUrl, id, authorId , category,
         location, author, likes, supports } = post;
 
     const tagList = tags.split(", ");
 
     const context = useContext(myContext);
-    const { setLoading, getCommentsForPost } = context;
+
+    const { setLoading, loading, followUser} = context;
 
     const userID = JSON.parse(localStorage.getItem('user')).user.uid;
 
@@ -73,23 +74,28 @@ const Post = ({ post }) => {
 
     const [comments, setComments] = useState([]);
 
-    useEffect(() => {
-        async function fetchComments() {
-            const cmts = await getCommentsForPost(id);
-            setComments(cmts);
-        }
-    }, []);
+    const followActivity = async () => {
+        await followUser(userID,authorId,author);
+    }
 
     return (
+
         <div
             //  onClick={() => window.location.href = `/post/${id}`}
             className="bg-slate-200 rounded-lg p-6 shadow-md max-w-2xl mx-auto mt-8
              overflow-y-hidden w-[100%]">
 
-            {/* Post Title */}
-            <h2 className="text-2xl font-bold mb-4 text-slate-600">{title}</h2>
+                {
+                    (loading) ? 
+                    <div>
+                        <h1>Loading posts...</h1>
+                    </div> : ""
+                }
 
-            {/* Author and Upvotes */}
+            {/* Post Title */}
+            <h2 className="text-2xl font-bold mb-4 text-slate-600 merriweather">{title}</h2>
+
+            {/* Author */}
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
                     <div className="w-8 h-8">
@@ -97,12 +103,13 @@ const Post = ({ post }) => {
                     </div>
                     <span className="text-gray-700 font-semibold">{author}</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                    <button className="text-slatw-8900 bg-blue-500 hover:underline">Follow</button>
-                    <button className="bg-red-400 text-white hover:underline">Flag</button>
 
-                    {/* <button className="text-gray-700 hover:underline">Comment</button>   */}
+                <div className="flex items-center space-x-2">
+                    <button className="text-slatw-8900 bg-blue-500 hover:underline"
+                    onClick={followActivity}>Follow</button>
+                    <button className="bg-red-400 text-white hover:underline">Flag</button>
                 </div>
+
             </div>
 
             {/* Tags and Category */}
@@ -130,9 +137,9 @@ const Post = ({ post }) => {
 
             {description ?
 
-                <p className="text-gray-800 leading-relaxed mb-4">
+                <div className="text-gray-800 leading-relaxed mb-4">
                     <RenderHTMLContent htmlContent={description} />
-                </p>
+                </div>
                 : ""}
 
 
@@ -159,16 +166,6 @@ const Post = ({ post }) => {
                     <p className="text-blue-500" key={index}>#{item}</p>
                 ))}
 
-            </div>
-
-
-            <div className="flex flex-row items-center my-4 w-full">
-                {/* <button className="bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-6 rounded-l-lg focus:outline-none w-1/2">
-                    Start a Thread
-                </button>
-                <div className="bg-indigo-500 text-white py-2 px-4 rounded-r-lg w-1/2 flex items-center justify-center">
-                    <FaComment className="text-2xl" />
-                </div> */}
             </div>
 
             {userID ? <CommentForm post_id={id} /> : ""}

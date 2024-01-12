@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 import myContext from '../../context/data/myContext';
-// import { toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, fireDB } from '../../firebase/FirebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -16,7 +16,7 @@ function Signup() {
     const context = useContext(myContext);
     const { loading, setLoading } = context;
 
-    const { profiles, setProfiles, updateProfileAuto } = context;
+    const { profiles, setProfiles } = context;
 
     const navigate = useNavigate();
 
@@ -24,16 +24,16 @@ function Signup() {
         setLoading(true)
         try {
             const result = await signInWithEmailAndPassword(auth, email, password);
-            // toast.success("Login successful", {
-            //     position: "top-right",
-            //     autoClose: 1800,
-            //     hideProgressBar: true,
-            //     closeOnClick: true,
-            //     pauseOnHover: true,
-            //     draggable: true,
-            //     progress: undefined,
-            //     theme: "colored",
-            // })
+            toast.success("Login successful", {
+                position: "top-right",
+                autoClose: 1800,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
             localStorage.setItem('user', JSON.stringify(result))
             navigate('/')
             setLoading(false)
@@ -71,7 +71,7 @@ function Signup() {
                 fullname: user.name,
             });
 
-            await updateProfileAuto();
+            // await updateProfileAuto();
             
             toast.success("Signup Succesfully")
             setName("");

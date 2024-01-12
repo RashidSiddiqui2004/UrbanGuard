@@ -1,10 +1,10 @@
 import React from 'react'
 import DisasterManager from './DisasterManager';
 
-import earthquake from "/public/earthquake.jpg";
-import flood from "/public/flood.jpg";
-import hurricane from "/public/hurricane.jpg";
-import thunderstorm from "/public/thunderstorm.jpg";
+const earthquake = "https://res.cloudinary.com/drlkkozug/image/upload/v1705042856/smqt8fp6cyque2uw9qhd.jpg";
+const flood = "https://res.cloudinary.com/drlkkozug/image/upload/v1705042856/qaldkrd1evov6rthgl5m.jpg";
+const hurricane = "https://res.cloudinary.com/drlkkozug/image/upload/v1705042856/cvscgtfwrnd6lqbxxgpu.jpg";
+const thunderstorm = "https://res.cloudinary.com/drlkkozug/image/upload/v1705042855/ifkhne728mqijv4ftscn.jpg";
 
 const EmergencyResources = () => {
 

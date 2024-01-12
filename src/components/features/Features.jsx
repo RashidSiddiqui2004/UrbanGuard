@@ -2,7 +2,6 @@
 import React from 'react'
 import FeatureCard from './FeatureCard'
 import { motion } from 'framer-motion'
-
 import feature1 from "./incident.jpg"
 import feature2 from "./realMap.jpg";
 

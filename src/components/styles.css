@@ -1,0 +1,11 @@
+/* font-family styles */
+
+@font-face {
+    font-family: merriweather;
+    src: url(Merriweather-Black.ttf);
+}
+
+.merriweather{
+    font-family: merriweather;
+}
+
