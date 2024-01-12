@@ -17,6 +17,9 @@ Urban Guard is a comprehensive safety and emergency management application desig
     
 - **Natural Disaster Guidelines:** Provides guidelines on what to do during natural disasters.
   
+## Website URL 
+
+[Add website link here]
 
 ## Installation
 
@@ -37,15 +40,18 @@ Urban Guard is a comprehensive safety and emergency management application desig
   ```bash
   cd urban-guard
 
+
 3. Install dependencies:
 
  ```bash
  npm install
+
  
 4. Start the application:
 
    ```bash
   npm run dev
+
 
 ### Dependencies
 - React.js [https://react.dev/]
