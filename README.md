@@ -29,20 +29,23 @@ Urban Guard is a comprehensive safety and emergency management application desig
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/urban-guard.git
+   git clone  https://github.com/RashidSiddiqui2004/UrbanGuard.git
+  
 
 2. Navigate to the project directory:
 
+  ```bash
   cd urban-guard
 
 3. Install dependencies:
 
+ ```bash
  npm install
  
 4. Start the application:
 
+   ```bash
   npm run dev
-
 
 ### Dependencies
 - React.js [https://react.dev/]
