@@ -60,7 +60,7 @@ const DiscussionYard = ({thread,myPost}) => {
         <div className="py-4 px-6 mx-4 my-8 rounded-lg shadow-md" style={conditionalStyles}>
             <div className="flex items-center mb-4">
                 <img
-                    src="/user.jpg"
+                    src="https://res.cloudinary.com/drlkkozug/image/upload/v1705071144/y9evmbpdht5ezj3fkal9.jpg"
                     className="w-12 h-12 rounded-full object-cover mr-4"
                     alt="User Avatar"
                 />

@@ -10,10 +10,14 @@ const CommunityPosts = () => {
     const context = useContext(myContext)
     const { post, searchkey, setPostCategory, categoryType } = context;
 
+
+    const uniqueCategories = [...new Set(post.map(item => item.category))];
+
+
     const filteredPosts = post.filter((obj) => obj.title.toLowerCase().includes(searchkey.toLowerCase()) ||
         obj.tags.toLowerCase().includes(searchkey.toLowerCase()))
         .filter((obj) => obj.category.toLowerCase()
-        .includes(categoryType.toLowerCase()))
+            .includes(categoryType.toLowerCase()))
 
 
     return (
@@ -41,14 +45,13 @@ const CommunityPosts = () => {
                         <select value={categoryType} onChange={(e) => setPostCategory(e.target.value)}
                             className="px-6 py-3 rounded-md bg-slate-900 text-white
                                 border-transparent outline-0 focus:border-gray-500 
-                                text-sm w-fit min-w-40 text-center">
+                                text-sm min-w-40">
 
-                            {post.map((item, index) => {
-                                return (
-                                    <option key={index} value={item.category.toLowerCase()}
-                                        className=''>{item.category}</option>
-                                )
-                            })}
+                            {uniqueCategories.map((category, index) => (
+                                <option key={index} value={category} className='text-center'>
+                                    {category}
+                                </option>
+                            ))}
 
                         </select>
                     </div>

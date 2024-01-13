@@ -5,7 +5,7 @@ const FeatureCard = ({feature}) => {
     return (
         <div className='border-2 border-white bg-blue-100
          text-slate-800 py-3 px-8 rounded-lg hover:shadow-lg
-          flex-grow-0 hover:shadow-pink-400 transition-all'>
+          hover:shadow-pink-400 transition-all flex-grow h-full flex flex-col'>
             <img src={feature.featureIcon} alt="img" width={150}
              className='flex text-center ml-[20%] mb-4 mt-3 rounded-2xl'/>
 

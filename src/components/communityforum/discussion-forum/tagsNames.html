@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .tagged-name {
+      color: blue; /* Set the desired color */
+      font-weight: bold; /* Optional: Set additional styling */
+    }
+  </style>
+  <title>Tagged Names Coloring</title>
+</head>
+<body>
+
+<script>
+  function colorTaggedNames(message) {
+    // Use a regular expression to find all words starting with '@'
+    const regex = /@(\w+)/g;
+    const coloredMessage = message.replace(regex, '<span class="tagged-name">@$1</span>');
+
+    // Display the colored message
+    document.body.innerHTML = coloredMessage;
+  }
+
+  // Example usage
+  const replyMessage = "Hello @user1 and @user2! How are you?";
+  colorTaggedNames(replyMessage);
+</script>
+
+</body>
+</html>

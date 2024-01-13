@@ -3,44 +3,6 @@ import React from 'react'
 
 const Comment = ({ comment }) => {
 
-    // like a comment 
-    // const likeComment = async (commentId) => {
-
-    //     const likeRef = doc(fireDB, 'comments', `${commentId}`);
-
-    //     let condition = isNaN(commentData.likes) || (commentData.hasOwnProperty('likes')==false);
-
-    //     if(condition===false){
-    //         // console.log(commentData);
-    //         // console.log(commentData.hasOwnProperty('likes'));
-    //         // console.log(isNaN(commentData.likes))
-    //         const updatedVotes = commentData.likes + 1; // Increment the likes
-    //         const updatedPost = {
-    //             ...commentData,
-    //             likes: updatedVotes,
-    //         };
-
-    //         // Update the post in the database
-    //         // await setDoc(doc(fireDB, 'comm', params.id), updatedPost);
-    //         setCommentData(updatedPost);
-    //         toast.success('Comment Upvoted 👍');
-    //         await setDoc(likeRef, updatedPost );
-    //     }
-
-    //     else{
-    //         const updatedVotes =  1; // Increment the likes
-    //         const updatedPost = {
-    //             ...commentData,
-    //             likes: updatedVotes,
-    //         };
-
-    //         setCommentData(updatedPost);
-    //         toast.success('1st like👍');
-    //         await setDoc(likeRef, updatedPost );
-    //     }
-
-    // }
-
     // reply to a comment
 
     // function replyToComment (){
@@ -51,7 +13,8 @@ const Comment = ({ comment }) => {
         <div className="bg-white p-4 rounded-lg shadow-md">
             <div className="flex items-center">
                 <img
-                    src="/user.jpg"
+                    src="https://res.cloudinary.com/drlkkozug/image/upload/v1705071144/y9evmbpdht5ezj3fkal9.jpg"
+                    alt='User Avatar'
                     className="w-10 h-10 rounded-full object-cover mr-2"
                 />
                 <span className="font-semibold text-gray-700">{comment.username}</span>

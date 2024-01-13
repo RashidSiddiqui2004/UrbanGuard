@@ -19,17 +19,11 @@ const UserProfile = () => {
 
     const userid = auth?.currentUser?.uid;
 
-    const user = {
-        username: userid,
-        email: auth?.currentUser?.email,  
-        joinDate: 'January 1, 2022',
-    };
+    const userDetails = localStorage.getItem("userProfile");
 
     const handlePosts = async () => {
 
-        setShowposts((prev) => !prev);
-
-        console.log('showPosts: ', showPosts);
+        setShowposts((prev) => !prev); 
 
         if (showPosts === false) {
             return;
@@ -49,12 +43,15 @@ const UserProfile = () => {
         postCommentsCount: 0,
         followersCount: 0,
         followingsCount: 0,
+        username: "Username",
+        emailId: "email@gmail.com",
+        joinDate: "January 1, 2024"
     });
     
     useEffect(() => {
+
         const getUserdata = async () => {
-            const userData = await getUserDetails(userid);  
-            console.log(userData);
+            const userData = await getUserDetails(userid);   
             setMetadata(userData);
         };
  
@@ -68,13 +65,13 @@ const UserProfile = () => {
 
             <div className='flex items-center justify-center mb-5 mt-9'>
                 <img
-                    src='user.jpg'
+                    src="https://res.cloudinary.com/drlkkozug/image/upload/v1705071144/y9evmbpdht5ezj3fkal9.jpg"
                     alt='Profile'
                     className='w-14 h-14 rounded-full object-cover mr-4'
                 />
                 <div>
-                    <h2 className='text-lg font-semibold'>{user.username}</h2>
-                    <p className='text-gray-300 py-1'>{user.email}</p>
+                    <h2 className='text-lg font-semibold'>{userDetails?.username || metaData?.username}</h2>
+                    <p className='text-gray-300 py-1'>{userDetails?.emailId || metaData?.emailId}</p>
                 </div>
             </div>
 
@@ -82,32 +79,32 @@ const UserProfile = () => {
             justify-center lg:space-x-8 mb-5 mt-10'>
                 <div className='flex items-center space-x-2 my-3 lg:my-0'>
                     <FaRegNewspaper className='text-xl' />
-                    <p>{metaData.postsCount} Posts</p>
+                    <p>{metaData?.postsCount} Posts</p>
                 </div>
                 <div className='flex items-center space-x-2 my-3 lg:my-0'>
                     <FaThumbsUp className='text-xl' />
-                    <p>{metaData.likesCount} Likes</p>
+                    <p>{metaData?.likesCount} Likes</p>
                 </div>
                 <div className='flex items-center space-x-2 my-3 lg:my-0'>
                     <FaRegComments className='text-xl' />
-                    <p>{metaData.commentsCount} Comments</p>
+                    <p>{metaData?.commentsCount} Comments</p>
                 </div>
             </div>
 
             <div className='flex justify-center space-x-16 mb-5 mt-4'>
                 <div className='flex items-center space-x-2'>
                     <FaUsers className='text-xl' />
-                    <p>{metaData.followersCount} Followers</p>
+                    <p>{metaData?.followersCount} Followers</p>
                 </div>
                 <div className='flex items-center space-x-2'>
                     <FaUserFriends className='text-xl' />
-                    <p>{metaData.followingsCount} Followings</p>
+                    <p>{metaData?.followingsCount} Followings</p>
                 </div>
             </div>
 
             <div className='flex items-center space-x-2 mb-5'>
                 <FaCalendar className='text-xl' />
-                <p>Joined on {user.joinDate}</p>
+                <p>Joined on {userDetails?.joinDate || metaData?.joinDate}</p>
             </div>
 
             {/* User posts */}

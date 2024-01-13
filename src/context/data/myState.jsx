@@ -3,11 +3,12 @@ import React, { useEffect, useState } from 'react'
 import MyContext from './myContext'
 import {
     Timestamp, addDoc, collection, deleteDoc, doc, getDocs,
-    onSnapshot, orderBy, query, setDoc, getDoc, updateDoc,
+    onSnapshot, orderBy, query, setDoc, getDoc, updateDoc, increment,
 } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { where } from 'firebase/firestore';
 import { fireDB } from '../../firebase/FirebaseConfig';
+import THRESHOLD_FLAGS from '../../utils/ThresholdFlags';
 
 function myState(props) {
 
@@ -94,6 +95,7 @@ function myState(props) {
         tags: null,
         likes: 0,
         supports: 0,
+        flags: 0,
         time: Timestamp.now(),
         date: new Date().toLocaleString(
             "en-US",
@@ -199,21 +201,21 @@ function myState(props) {
 
     // update post function
     // const updatePost = async () => {
-    //     setLoading(true)
-    //     try {
+    // setLoading(true)
+    // try {
 
-    //         await setDoc(doc(fireDB, 'posts', posts.id), posts)
-    //         toast.success("Post Updated successfully")
-    //         setTimeout(() => {
-    //             window.history.back();
-    //         }, 800);
-    //         getPostData();
-    //         setLoading(false)
+    //     await setDoc(doc(fireDB, 'posts', posts.id), posts)
+    //     toast.success("Post Updated successfully")
+    //     setTimeout(() => {
+    //         window.history.back();
+    //     }, 800);
+    //     getPostData();
+    //     setLoading(false)
 
-    //     } catch (error) {
-    //         console.log(error)
-    //         setLoading(false)
-    //     }
+    // } catch (error) {
+    //     console.log(error)
+    //     setLoading(false)
+    // }
     // }
 
     // delete post
@@ -231,12 +233,57 @@ function myState(props) {
         }
     }
 
+    const flagPost = async (userId, postId) => {
+        setLoading(true);
+
+        try {
+            const postRef = doc(fireDB, 'posts', postId);
+
+            const flagsRef = doc(fireDB, 'flags', `${userId}_${postId}`);
+
+            const flagDoc = await getDoc(flagsRef);
+
+            if (flagDoc.exists()) {
+                // The user has already flagged the post
+                // display a message
+
+                toast.info("Already flagged this post !");
+                return false;
+            } else {
+                // flag the post 
+
+                // Increment the 'flags' field by 1
+                await updateDoc(postRef, {
+                    flags: increment(1),
+                });
+
+                toast.success("Reported post !");
+
+                // Get the updated post data
+                const postDoc = await getDoc(postRef);
+                const flagsCount = postDoc.data().flags || 0;
+
+                // Check if the flags count exceeds the threshold
+                if (flagsCount > THRESHOLD_FLAGS) {
+                    // If yes, delete the post
+                    await deleteDoc(postRef);
+                }
+
+                await setDoc(flagsRef, { userId, postId });
+            }
+
+            setLoading(false);
+        } catch (error) {
+            console.error('Error flagging post:', error);
+            setLoading(false);
+        }
+    };
 
     const followUser = async (followerId, followingId, followingUsername) => {
         try {
 
-            if(followerId == followingId){
-                toast.error(`You can't follow yourself!`);
+            if (followerId == followingId) {
+                toast.error(`You can't follow yourself !`);
                 return false;
             }
 
@@ -248,7 +295,7 @@ function myState(props) {
 
             const followingsSnapshot = await getDocs(followingsQuery);
 
-            if (!followingsSnapshot.empty) { 
+            if (!followingsSnapshot.empty) {
                 toast.info(`You are already following ${followingUsername}`);
                 return false;
             }
@@ -281,8 +328,32 @@ function myState(props) {
         }
     };
 
-
     const getUserDetails = async (userId) => {
+
+        const userQuery = query(collection(fireDB, 'users'), where('uid', '==', userId));
+        const userSnapshot = await getDocs(userQuery);
+
+        let username, emailId, joinTime;
+
+        userSnapshot.forEach((doc) => {
+            username = { ...doc.data(), id: doc.id }.name;
+            emailId = { ...doc.data(), id: doc.id }.email;
+            joinTime = { ...doc.data(), id: doc.id }.time;
+        });
+
+        const joinDate = joinTime.toDate();
+
+        // Extracting components
+        const year = joinDate.getFullYear();
+        const month = joinDate.getMonth() + 1; // Month is zero-indexed, so add 1
+        const day = joinDate.getDate();
+        const hours = joinDate.getHours();
+        const minutes = joinDate.getMinutes();
+        const seconds = joinDate.getSeconds();
+
+        // Creating a formatted string
+        const userJoinDate = `${year}-${month}-${day}`;
+        const userjoinTime = `${hours}:${minutes}:${seconds}`
 
         const postsQuery = query(collection(fireDB, 'posts'), where('authorId', '==', userId));
         const postsSnapshot = await getDocs(postsQuery);
@@ -308,6 +379,7 @@ function myState(props) {
             if (postData.likes && typeof postData.likes === 'number') {
                 totalLikes += postData.likes;
             }
+
         });
 
         const likesCount = totalLikes;
@@ -335,11 +407,30 @@ function myState(props) {
             postCommentsCount,
             followersCount,
             followingsCount,
+            username,
+            emailId,
+            joinDate: userJoinDate,
         };
+
+        const details = localStorage.getItem("userProfile");
+
+        if ((details == null)) {
+            const permanentData = {
+                username: username,
+                emailId: emailId,
+                joinDate: userjoinTime,
+            };
+
+            // Convert the object to a JSON string
+            const permanentDataString = JSON.stringify(permanentData);
+
+            // Store the JSON string in localStorage
+            localStorage.setItem("userProfile", permanentDataString);
+        }
+
 
         return metadata;
     };
-
 
     const [thread, setThread] = useState({
         discussion: "",
@@ -605,45 +696,8 @@ function myState(props) {
         }
     }
 
-    // const submitReply = async (commentId) => {
-    //     // Create a Firestore reference to the post document using a collection group query
-    //     // const postRef = db.collectionGroup('comments').where('id', '==', commentId);
-
-    //     const commentsColl = collection(fireDB, 'comments');
-
-    //     const postRef = query(commentsColl, where('id', '==', commentId));
-    //     // Prepare the reply data
-    //     const replyData = {
-    //         userId: '12345', // Replace with the actual user ID
-    //         reply: "New reply",
-    //         timestamp: new Date()
-    //     };
-
-    //     const userQuery = query(commentsColl, where('id', '==', commentId));
-
-    //     let commentdata = "";
-
-    //     getDocs(userQuery)
-    //         .then((querySnapshot) => {
-    //             if (!querySnapshot.empty) {
-    //                 const userDocument = querySnapshot.docs[0].data();
-    //                 commentdata = userDocument; 
-    //             } else {
-    //                 console.log('No reply found.');
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error retrieving replies:', error);
-    //         });
-
-    //     // Use the `arrayUnion` method to append the reply to the 'replies' array
-    //     postRef.update({
-    //         replies:commentdata.replies.arrayUnion(replyData),
-    //     });
-
-    // }
-
     const submitReply = async (commentId, userID, username, userReply) => {
+
         // Create a Firestore reference to the post document using a collection group query
         const commentsColl = collection(fireDB, 'comments');
         const postRef = query(commentsColl, where('id', '==', commentId));
@@ -781,7 +835,7 @@ function myState(props) {
             replies, setReplies, submitReply,
             addThread, setThread, thread, threads, getThreads,
             threadReplies, setThreadReplies, getThreadReplies, replyOnThread,
-            getUserDetails, followUser,
+            getUserDetails, followUser, flagPost,
         }}>
             {props.children}
         </MyContext.Provider>

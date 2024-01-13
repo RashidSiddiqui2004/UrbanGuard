@@ -6,37 +6,38 @@ import { Link } from 'react-router-dom'
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, fireDB } from '../../firebase/FirebaseConfig';
 import myContext from '../../context/data/myContext';
+import getUsernameByUID from '../../utils/GetUser';
 
 const Sidebar = () => {
 
     const context = useContext(myContext)
 
     // to get the username from Database (optimised using caching)
-    async function getUsernameByUID(uid) {
-        // Reference to the "users" collection
+    // async function getUsernameByUID(uid) {
+    //     // Reference to the "users" collection
 
-        const usersCollection = collection(fireDB, 'users');
+    //     const usersCollection = collection(fireDB, 'users');
 
-        const userQuery = query(usersCollection, where('uid', '==', uid));
+    //     const userQuery = query(usersCollection, where('uid', '==', uid));
 
-        try {
-            const querySnapshot = await getDocs(userQuery);
+    //     try {
+    //         const querySnapshot = await getDocs(userQuery);
 
-            if (!querySnapshot.empty) {
-                // Retrieve the first (and hopefully only) document
-                const userDoc = querySnapshot.docs[0];
-                const username = userDoc.data().name;
-                return username;
-            } else {
-                console.log('User not found.');
-            }
-        } catch (error) {
-            console.error('Error fetching user:', error);
-        }
+    //         if (!querySnapshot.empty) {
+    //             // Retrieve the first (and hopefully only) document
+    //             const userDoc = querySnapshot.docs[0];
+    //             const username = userDoc.data().name;
+    //             return username;
+    //         } else {
+    //             console.log('User not found.');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching user:', error);
+    //     }
 
-        return null;
+    //     return null;
 
-    }
+    // }
 
     const [user_name, setUser] = useState('');
 
@@ -47,9 +48,7 @@ const Sidebar = () => {
             const cacheCall = localStorage.getItem("username");
 
             if (cacheCall == null) {
-
-                console.log('cacheCall1');
-
+ 
                 let uid = auth.currentUser.uid;
 
                 getUsernameByUID(uid).then((username) => {
@@ -68,7 +67,6 @@ const Sidebar = () => {
         }
 
         usernameFunc();
-
     }, []);
 
     return (
@@ -84,7 +82,7 @@ const Sidebar = () => {
                  shadow-purple-600 hover:scale-95 transition-all'>
                 <Link to={'/user-profile'} className='flex flex-row gap-6 justify-center'>
                     <div className="w-6 h-6">
-                        <img src="/user.jpg" alt="user Avatar" className='rounded-full' />
+                        <img src="https://res.cloudinary.com/drlkkozug/image/upload/v1705071144/y9evmbpdht5ezj3fkal9.jpg" alt="user Avatar" className='rounded-full' />
                     </div>
 
                     <h3 className='text-center text-xl text-white'>{user_name}</h3>
@@ -155,7 +153,7 @@ const Sidebar = () => {
 
             <div className="flex flex-col items-center merriweather justify-between h-full bg-gray-800 text-white p-4">
                 <div className="mb-6">
-                    <img src="logo.jpg" alt="Urban Guard Logo" 
+                    <img src="/logo.jpg" alt="Urban Guard Logo" 
                     className="w-12 h-12 rounded-full mb-2 ml-10" />
                     <h1 className="text-xl font-semibold">Urban Guard</h1>
                 </div>

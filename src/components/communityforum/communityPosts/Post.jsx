@@ -1,23 +1,24 @@
 
-import React, { useContext, useEffect, useState } from 'react'
-import { FaComment, FaHandHoldingHeart, FaHeartCircleBolt } from "react-icons/fa6";
+import React, { useContext } from 'react'
+import { FaHandHoldingHeart, FaHeartCircleBolt } from "react-icons/fa6";
 import { auth, fireDB } from '../../../firebase/FirebaseConfig';
 import myContext from '../../../context/data/myContext';
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import CommentForm from './CommentForm';
 import CommentSection from './CommentSection';
 import RenderHTMLContent from '../../../utils/RenderHTMLContent';
+import { MdOutlineDangerous } from "react-icons/md";
 
 const Post = ({ post }) => {
 
-    const { title, tags, description, imageUrl, id, authorId , category,
+    const { title, tags, description, imageUrl, id, authorId, category,
         location, author, likes, supports } = post;
 
     const tagList = tags.split(", ");
 
     const context = useContext(myContext);
 
-    const { setLoading, loading, followUser} = context;
+    const { setLoading, loading, followUser, flagPost} = context;
 
     const userID = JSON.parse(localStorage.getItem('user')).user.uid;
 
@@ -72,10 +73,8 @@ const Post = ({ post }) => {
 
     }
 
-    const [comments, setComments] = useState([]);
-
     const followActivity = async () => {
-        await followUser(userID,authorId,author);
+        await followUser(userID, authorId, author);
     }
 
     return (
@@ -84,14 +83,7 @@ const Post = ({ post }) => {
             //  onClick={() => window.location.href = `/post/${id}`}
             className="bg-slate-200 rounded-lg p-6 shadow-md max-w-2xl mx-auto mt-8
              overflow-y-hidden w-[100%]">
-
-                {
-                    (loading) ? 
-                    <div>
-                        <h1>Loading posts...</h1>
-                    </div> : ""
-                }
-
+                
             {/* Post Title */}
             <h2 className="text-2xl font-bold mb-4 text-slate-600 merriweather">{title}</h2>
 
@@ -99,15 +91,17 @@ const Post = ({ post }) => {
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
                     <div className="w-8 h-8">
-                        <img src="/user.jpg" alt="user Avatar" className='rounded-full' />
+                        <img src="https://res.cloudinary.com/drlkkozug/image/upload/v1705071144/y9evmbpdht5ezj3fkal9.jpg" alt="user Avatar" className='rounded-full' />
                     </div>
                     <span className="text-gray-700 font-semibold">{author}</span>
                 </div>
 
                 <div className="flex items-center space-x-2">
                     <button className="text-slatw-8900 bg-blue-500 hover:underline"
-                    onClick={followActivity}>Follow</button>
-                    <button className="bg-red-400 text-white hover:underline">Flag</button>
+                        onClick={followActivity}>Follow</button>
+                    <button className="bg-red-400 text-white hover:underline flex"
+                    onClick={() => flagPost(userID,id)}>Flag
+                        <MdOutlineDangerous className='mt-[1px] ml-2 text-2xl' /></button>
                 </div>
 
             </div>
@@ -117,7 +111,7 @@ const Post = ({ post }) => {
                 {/* Location */}
                 <div className="mb-4 mt-5 lg:mt-2">
                     <span className="text-gray-700 font-semibold font-serif">Location:</span>
-                    <span className="text-blue-500 font-bold font-serif ml-2">{location}</span>
+                    <span className="text-slate-900 font-bold font-serif ml-2">{location}</span>
                 </div>
 
                 <div className="ml-auto mt-5 lg:mt-2">
@@ -152,10 +146,10 @@ const Post = ({ post }) => {
                     <span className="text-slate-800 text-lg">{likes}</span>
                 </div>
 
-                <div className='flex space-x-2'>
+                {/* <div className='flex space-x-2'>
                     <span className='text-xl text-slate-800 my-1 cursor-pointer'><FaHeartCircleBolt /></span>
                     <span className="text-slate-800 text-lg">{supports}</span>
-                </div>
+                </div> */}
 
             </div>
 
