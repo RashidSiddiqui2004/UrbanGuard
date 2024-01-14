@@ -4,6 +4,7 @@ import getUsernameByUID from '../../../utils/GetUser';
 import myContext from '../../../context/data/myContext';
 import { useParams } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
+import { HiChevronDown, HiChevronUp } from 'react-icons/hi';
 
 const DiscussionReply = () => {
 
@@ -15,14 +16,35 @@ const DiscussionReply = () => {
 
     const [thread, setThread] = useState(null)
 
+    let [taggedNames, setTaggedNames] = useState([]);
+
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
     useEffect(() => {
 
-        const fetchThreadReplies = async () => {
-            const currentThread = await getThreadReplies(commentId);
-            setThread(currentThread);
+        const fetchThreadReplies = () => {
+            getThreadReplies(commentId)
+                .then(currentThread => {
+                    setThread(currentThread);
+
+                    const replies = currentThread.replies;
+
+                    if (currentThread) {
+                        const uniqueNames = Array.from(new Set(replies.map(obj => obj.author)));
+                        setTaggedNames(uniqueNames); 
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching thread replies:', error);
+                });
         };
 
         fetchThreadReplies();
+
 
         // let formattedReplies = [];
 
@@ -37,8 +59,16 @@ const DiscussionReply = () => {
 
     }, [commentId]);
 
+    const [selectedName, setSelectedName] = useState('');
 
     const [replyText, setReplyText] = useState('');
+
+    const handleNameClick = (name) => {
+        setSelectedName(name);
+        setIsMenuOpen(false);
+        setReplyText((prevText) => prevText + ` @${name}` + ' ');
+    };
+
 
     const handleReplyChange = (e) => {
         setReplyText(e.target.value);
@@ -87,7 +117,7 @@ const DiscussionReply = () => {
         const messagePointer = document.getElementById('copyConf');
 
         messagePointer.classList.remove('hidden');
-        
+
         setTimeout(() => {
             messagePointer.classList.add('hidden');
         }, 1000);
@@ -112,9 +142,9 @@ const DiscussionReply = () => {
     };
 
     return (
-        <div className='w-[70%] items-center lg:mx-[180px] mt-11 md:mt-0 ml-3 md:ml-0 mb-4'>
+        <div className='lg:w-[70%] items-center lg:mx-[180px] mt-11 md:mt-0 ml-3 md:ml-0 mb-4 overflow-hidden'>
 
-            <div className="p-4">
+            <div className="p-4 md:w-full overflow-x-hidden">
 
                 <div className="flex items-center">
                     <img
@@ -124,36 +154,47 @@ const DiscussionReply = () => {
                     <span className="font-semibold text-gray-200">{thread?.author}</span>
 
                 </div>
-                <p className="text-white mt-2 bg-slate-400 px-2 py-2 rounded-md">{thread?.discussion}</p>
+                <p className="text-white text-sm mt-2 bg-slate-400 px-2 py-2 rounded-md merriweather">{thread?.discussion}</p>
 
-
-                {/* suggested users */}
-
-                {/* <div id='mentionDropdown' className='bg-slate-800 text-gray-200'>
-                    <ul>
-                        <li className='mentionItem bg-slate-400 text-slate-950
-                         hover:bg-slate-800 hover:text-gray-200 hover:scale-105 transition-all'>Rashid</li>
-                        <li className='mentionItem bg-slate-400 text-slate-950
-                         hover:bg-slate-800 hover:text-gray-200 hover:scale-105 transition-all'>Sofiya</li>
-                    </ul>
-                </div> */}
-
-                <div className='flex gap-9'>
+ 
+                <div className='block lg:flex gap-9'>
                     <button id="shareButton"
                         className='border-gray-400 mt-2 mb-1 bg-slate-700 text-gray-400'
                         onClick={copyToClipboard}>Share Thread</button>
 
-                    <div className='bg-pink-400 text-white rounded-lg px-4
-                     mt-2 text-center h-16 pb-5 hidden transition-all' id='copyConf'>
+                    <div className='text-pink-500 border-slate-300 border-2 rounded-lg px-4
+                     mt-2 text-center h-16 pb-5 hidden transition-all shadow-md shadow-red-500' id='copyConf'>
                         <p className='mt-5'>Copied to Clipboard</p>
                     </div>
                 </div>
 
-                {/* Reply input field */}
+                <div className='ml-1 mb-4 mt-5'>
+                    <div className='flex items-center cursor-pointer' onClick={toggleMenu}>
+                        <p className='text-gray-600 text-sm mb-2 mr-2'>Mention someone in the thread using '@'</p>
+                        {isMenuOpen ? <HiChevronUp className='text-gray-600' size={20} /> : <HiChevronDown className='text-gray-600' size={20} />}
+                    </div>
+
+                    {isMenuOpen && (
+                        <ul className='bg-gray-100 rounded-lg overflow-hidden shadow-md mt-2 w-fit'>
+                            {taggedNames && taggedNames.length > 0 ? (
+                                taggedNames.map((name, index) => (
+                                    <li key={index} 
+                                    className='border-b border-gray-200 px-4 py-3 hover:bg-gray-200 transition duration-300 cursor-pointer'
+                                    onClick={() => handleNameClick(name)}>
+                                        <span className='text-gray-800'>{name}</span>
+                                    </li>
+                                ))
+                            ) : (
+                                <li className='text-gray-500 px-4 py-3'>No one available to tag.</li>
+                            )}
+                        </ul>
+                    )}
+                </div> 
+
                 <div className="mb-4 mt-2">
                     <textarea
                         id='discussionTextarea'
-                        className="w-full p-2 border rounded-md text-slate-900"
+                        className="w-full p-2 border rounded-md bg-white text-slate-900"
                         rows="4"
                         placeholder="Type your reply here..."
                         value={replyText}
@@ -169,11 +210,7 @@ const DiscussionReply = () => {
                 </button>
             </div>
 
-            <div className='ml-5 mb-2'>
-                <p>Use '@' to tag someone in the thread.</p>
-            </div>
-
-            <div>
+            <div className=''>
                 {threadReplies.map((reply) => {
                     const timestamp = reply.timestamp.toDate();
 
@@ -197,3 +234,11 @@ const DiscussionReply = () => {
 }
 
 export default DiscussionReply
+
+
+// threadReplies.forEach(comment => {
+//     // console.log(comment.author);
+//     setTaggedName((prev) => [...prev, comment.author])
+// });
+
+// console.log(taggedNames);

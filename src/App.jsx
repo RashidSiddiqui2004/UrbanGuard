@@ -24,6 +24,7 @@ import Navbar from './components/Navbar';
 import CommunityDiscussions from './components/communityforum/discussion-forum/CommunityDiscussions';
 import DiscussionReply from './components/communityforum/discussion-forum/DiscussionReply';
 import UserProfile from './components/userprofile/UserProfile';
+import QnA from './components/communityforum/qna/QnA';
 
 function App() {
   return (
@@ -116,7 +117,7 @@ function App() {
           <Route path="/community-qna" element={
             <ProtectedRoute>
               <Layout>
-                <SafetyTips />
+                <QnA />
               </Layout>
             </ProtectedRoute>
           } />

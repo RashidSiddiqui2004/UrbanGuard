@@ -1,6 +1,6 @@
 
 import React, { Fragment, useContext, useState } from 'react'
-import myContext from '../context/data/myContext';  
+import myContext from '../context/data/myContext';
 import { Link } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react'
 import { RxCross2 } from 'react-icons/rx'
@@ -57,14 +57,25 @@ function Navbar() {
                     <RxCross2 />
                   </button>
                 </div>
-                <div className="space-y-6 border-t border-gray-200 px-4 py-6">
+                <div className="border-t border-gray-200 px-4 py-6 ">
 
-                  <Link to={'/community-posts'} className="text-sm font-medium text-gray-900 " style={{ color: mode === 'dark' ? 'white' : '', }}>
-                    Community Posts
-                  </Link>
+                  {user ? <div className="flow-root mb-2">
+                    <Link to={'/report'} className="text-sm font-medium text-gray-700"
+                      style={{ color: mode === 'dark' ? 'white' : '', }}>
+                      Send Report
+                    </Link>
+                  </div> : ""}
 
-                  {user ? <div className="flow-root">
-                    <Link to={'/emergency-resources'} className="text-sm font-medium text-gray-700 " style={{ color: mode === 'dark' ? 'white' : '', }}>
+                  <div className="flow-root mb-2">
+                    <Link to={'/community-posts'} className="text-sm font-medium text-gray-900"
+                      style={{ color: mode === 'dark' ? 'white' : '', }}>
+                      Community Posts
+                    </Link>
+                  </div>
+
+                  {user ? <div className="flow-root mb-2">
+                    <Link to={'/emergency-resources'} className="text-sm font-medium text-gray-700"
+                      style={{ color: mode === 'dark' ? 'white' : '', }}>
                       Emergency Resources
                     </Link>
                   </div> : ""}
@@ -90,8 +101,8 @@ function Navbar() {
                       <img
                         className="inline-block w-10 h-10 rounded-full"
                         src="https://res.cloudinary.com/drlkkozug/image/upload/v1705071144/y9evmbpdht5ezj3fkal9.jpg"
-                        alt="user" />                                        
-                      </Link>
+                        alt="user" />
+                    </Link>
                   </div>
                 </div>
 
@@ -128,15 +139,23 @@ function Navbar() {
                   </div>
                 </Link>
               </div>
- 
+
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+
+
+                  {user ? <div className="flow-root">
+                    <Link to={'/report'} className="text-sm font-medium text-white">
+                      Send Report
+                    </Link>
+                  </div> : ""}
 
                   {user ? <div className="flow-root">
                     <Link to={'/community-posts'} className="text-sm font-medium text-white">
                       Community Posts
                     </Link>
                   </div> : ""}
+
 
                   <Link to={'/emergency-resources'} className="text-sm font-medium text-white">
                     Emergency Resources

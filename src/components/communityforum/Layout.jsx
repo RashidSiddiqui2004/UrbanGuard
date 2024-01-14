@@ -1,28 +1,47 @@
+import React, { useState } from 'react';
+import Sidebar from './Sidebar';
+import { RxHamburgerMenu, RxCrossCircled } from 'react-icons/rx';
 
-import React from 'react'
-import Sidebar from './Sidebar'
-import { RxHamburgerMenu } from "react-icons/rx"; 
+import 'tailwindcss/tailwind.css';
 
 const Layout = ({ children }) => {
-    return (
-        <div className='flex flex-row min-h-screen'>
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-            <div className='hidden lg:block lg:w-[20%] bg-slate-400'>
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+
+    return (
+        <div className='flex flex-row min-h-screen overflow-hidden overflow-x-hidden'>
+
+            {/* Sidebar */}
+            <div className={`lg:w-[22%] bg-slate-400 ${isSidebarOpen ? 'block' : 'hidden'} lg:block overflow-hidden`}>
                 <Sidebar />
             </div>
 
-            <div className='w-[100%] lg:w-[80%] bg-slate-800'>
+            {/* Main Content */}
+            <div className='w-full lg:w-[78%] bg-slate-800'>
 
-                <div className='text-lg block lg:hidden fixed left-10 mt-2'>
-                    <RxHamburgerMenu />
+                {/* Hamburger Menu */}
+
+                <div className='text-lg lg:hidden fixed left-8 mt-6 cursor-pointer'
+                    onClick={toggleSidebar}>
+                    {!isSidebarOpen ?
+
+                        <RxHamburgerMenu />
+                        :
+                        <RxCrossCircled />
+                    }
+
                 </div>
 
+                {/* Page Content */}
                 {children}
 
             </div>
 
         </div>
-    )
-}
+    );
+};
 
-export default Layout
+export default Layout;

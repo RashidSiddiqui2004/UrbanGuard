@@ -17,9 +17,9 @@ const CommunityDiscussions = () => {
 
 
         <div>
-            <div className='py-2 px-2 bg-red-300'>
+            <div className='py-2 px-2 bg-inherit lg:bg-green-100'>
                 <h2 className='text-2xl font-serif font-bold 
-            text-center text-slate-800'>Community Discussions</h2>
+                text-center text-slate-300 lg:text-slate-800 mt-10 lg:mt-0'>Community Discussions</h2>
             </div>
 
             <div>

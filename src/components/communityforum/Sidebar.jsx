@@ -2,9 +2,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 // import { motion } from 'framer-motion'; 
-
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { auth, fireDB } from '../../firebase/FirebaseConfig';
+import { auth } from '../../firebase/FirebaseConfig';
 import myContext from '../../context/data/myContext';
 import getUsernameByUID from '../../utils/GetUser';
 
@@ -74,12 +72,12 @@ const Sidebar = () => {
 
             <Link to={'/'}>
                 <h2 className='text-md lg:text-xl mt-4 text-slate-800 
-        text-center font-bold my-5'>Urban Guard</h2>
+        text-center font-bold my-5 hidden lg:block'>Urban Guard</h2>
             </Link>
 
             <div
                 className='bg-slate-800 py-3 px-4 mx-6 rounded-lg my-3 shadow-md
-                 shadow-purple-600 hover:scale-95 transition-all'>
+                 shadow-purple-600 hover:scale-95 transition-all mt-16 md:mt-0'>
                 <Link to={'/user-profile'} className='flex flex-row gap-6 justify-center'>
                     <div className="w-6 h-6">
                         <img src="https://res.cloudinary.com/drlkkozug/image/upload/v1705071144/y9evmbpdht5ezj3fkal9.jpg" alt="user Avatar" className='rounded-full' />
@@ -138,7 +136,7 @@ const Sidebar = () => {
                 </Link>
             </div> */}
 
-            {/* <div
+            <div
                 initial={{ x: -200 }}
                 animate={{ x: 0 }}
                 transition={{
@@ -148,17 +146,18 @@ const Sidebar = () => {
                 <Link to={'/community-qna'}>
                     <h3 className='text-center text-2xl text-white'> Q & A</h3>
                 </Link>
-            </div> */}
+            </div>
 
 
-            <div className="flex flex-col items-center merriweather justify-between h-full bg-gray-800 text-white p-4">
-                <div className="mb-6">
+            <div className="flex-col items-center merriweather hidden lg:flex
+            justify-between h-full bg-gray-800 text-white p-4 flex-grow">
+                <div className="">
                     <img src="/logo.jpg" alt="Urban Guard Logo" 
                     className="w-12 h-12 rounded-full mb-2 ml-10" />
                     <h1 className="text-xl font-semibold">Urban Guard</h1>
                 </div>
  
-                <nav className="space-y-4">
+                <nav className="space-y-1">
                     <a href="/" className="block text-sm">Home</a>
                     <a href="/report" className="block text-sm">Incident Reports</a>
                     <a href="/emergency-resources" className="block text-sm">Resources</a> 

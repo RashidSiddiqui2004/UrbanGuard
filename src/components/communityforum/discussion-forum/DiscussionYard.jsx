@@ -72,7 +72,7 @@ const DiscussionYard = ({thread,myPost}) => {
             </div>
 
             <div className="bg-gray-100 text-gray-700 p-4 rounded-lg">
-                <p className="text-lg leading-relaxed">
+                <p className="text-lg leading-relaxed merriweather">
                     {thread.discussion}
                 </p>
             </div>
