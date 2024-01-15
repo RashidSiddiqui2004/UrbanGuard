@@ -27,10 +27,10 @@ const Reporting = () => {
     const [description, setDescription] = useState('');
     const [mediaFile, setMediaFile] = useState(null);
     const [latitude, setLatitude] = useState(-1);
-    const [longitude, setLongitude] = useState(77);
+    const [longitude, setLongitude] = useState(-1);
     const [anonymousReporting, setAnonymousReporting] = useState(false);
 
-    const [imageUrl, setImageUrl] = useState(null);
+    const [imageUrl, setImageUrl] = useState([]);
 
     const [showPreview, setShowPreview] = useState(false);
 
@@ -46,15 +46,36 @@ const Reporting = () => {
         }
     });
 
+    const handleMediaChange = async (e) => {
+
+        try {
+            // Upload the file and wait for the promise to resolve
+            const url = await uploadFile(e.target.files[0]);
+
+            // Once the promise is resolved, update the state
+            setMediaFile(e.target.files[0]);
+
+            // Check if the URL is not null before updating the state
+            if (url !== null) {
+                // Append the new URL to the existing array of URLs
+                setImageUrl(prev => [...prev, url]);
+                console.log(imageUrl);
+            }
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            // Handle the error as needed, e.g., display an error message to the user
+        }
+    }
+
     const handlePreview = async () => {
 
-        const url = await uploadFile(mediaFile);
+        // const url = await uploadFile(mediaFile);
 
         const content = editorRef.current.getContent();
 
         setDescription(content);
 
-        if (!(url === null)) setImageUrl(url);
+        // if (!(url === null)) setImageUrl(url);
 
         setShowPreview(true);
     };
@@ -69,9 +90,8 @@ const Reporting = () => {
 
         const reportSent = await sendReport(uid, u_name, incidentType, description, latitude, longitude, imageUrl, anonymousReporting);
 
-        if (reportSent) {
+        if (reportSent===true) {
             // if report submitted, redirect to home page & give a toast message 
-
             setTimeout(() => {
                 window.location.reload();
             }, 1000);
@@ -84,19 +104,18 @@ const Reporting = () => {
                 pauseOnHover: true,
                 draggable: true,
             });
-        } else {
-            // error handling
-            toast.error('Error submitting the report. Please try again later.', {
-                position: 'top-right',
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        }
+        } 
+        // else { 
+        //     toast.error('Error submitting the report. Please try again later.', {
+        //         position: 'top-right',
+        //         autoClose: 3000,
+        //         hideProgressBar: false,
+        //         closeOnClick: true,
+        //         pauseOnHover: true,
+        //         draggable: true,
+        //     });
+        // }
     };
-
 
     return (
 
@@ -116,9 +135,11 @@ const Reporting = () => {
 
                         <div>
                             <div className="mb-4">
+
                                 <label htmlFor="incidentType" className="block text-sm font-medium text-gray-200">
                                     Incident Type
                                 </label>
+
                                 <select
                                     id="incidentType"
                                     value={incidentType}
@@ -157,7 +178,7 @@ const Reporting = () => {
                                         alert(error);
                                     });
                             }}
-                            className='bg-slate-200 text-slate-950 text-sm 
+                                className='bg-slate-200 text-slate-950 text-sm 
                             lg:text-xl w-[100%]'>Get My Location</button>
 
                         </div>
@@ -208,9 +229,18 @@ const Reporting = () => {
                             <input
                                 type="file"
                                 id="mediaFile"
-                                onChange={(e) => setMediaFile(e.target.files[0])}
+                                onChange={(e) => { handleMediaChange(e) }}
                                 className="mt-1"
                             />
+
+                            {
+                                (imageUrl.length >= 1) ?
+
+                                    <p className='my-1'>Upload more media files (optional)</p>
+                                    :
+                                    ""
+                            }
+
                         </div>
 
                         <div className="flex items-center">
@@ -243,7 +273,7 @@ const Reporting = () => {
                     {
                         showPreview && (
                             <PreviewReport
-                                reporttype={incidentType} imageUrl={imageUrl}
+                                reporttype={incidentType} images={imageUrl}
                                 latitude={latitude} longitude={longitude} anonymousReporting={anonymousReporting}
                                 description={description} handleConfirmation={handleConfirmation} />
                         )

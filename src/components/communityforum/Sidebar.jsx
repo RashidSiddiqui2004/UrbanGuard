@@ -101,7 +101,7 @@ const Sidebar = () => {
                 </Link>
             </div>
 
-            <div
+            {/* <div
                 initial={{ x: -200 }}
                 animate={{ x: 0 }}
                 transition={{
@@ -110,7 +110,7 @@ const Sidebar = () => {
                 <Link to={'/community-safety-tips'}>
                     <h3 className='text-center text-2xl text-white'>Safety Alerts</h3>
                 </Link>
-            </div>
+            </div> */}
 
             <div
                 initial={{ x: -200 }}
@@ -144,12 +144,12 @@ const Sidebar = () => {
                 }}
                 className='bg-slate-800 py-5 px-4 mx-6 rounded-lg my-3 shadow-md shadow-blue-500 hover:scale-95 transition-all'>
                 <Link to={'/community-qna'}>
-                    <h3 className='text-center text-2xl text-white'> Q & A</h3>
+                    <h3 className='text-center text-2xl text-white'> FAQs </h3>
                 </Link>
             </div>
 
 
-            <div className="flex-col items-center merriweather hidden lg:flex
+            <div className="mt-6 flex-col items-center merriweather hidden lg:flex
             justify-between h-full bg-gray-800 text-white p-4 flex-grow">
                 <div className="">
                     <img src="/logo.jpg" alt="Urban Guard Logo" 

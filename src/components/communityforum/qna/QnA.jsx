@@ -39,7 +39,13 @@ const QnA = () => {
                 <div className="question" onClick={() => toggleAnswer("q5")}>
                     5. How can I publish a post on the Community Forum?
                 </div>
-                <div className="answer hidden bg-slate-800" id="q5">To publish a post, go to the "Community Forum" section, click on "New Post," and provide the necessary details. Users can react to posts, comment on them, and follow other users for updates.</div>
+                <div className="answer hidden bg-slate-800" id="q5">To publish a post, go to the "Community Posts" section, click on feather icon (or "New Post") and provide
+                 the necessary details. Users can react to posts, comment on them, and follow other users for updates.</div>
+                 <div className="question" onClick={() => toggleAnswer("q6")}>
+                    6. How can I start a new discussion thread on Urban Guard?
+                </div>
+                <div className="answer hidden bg-slate-800" id="q6">To start a new thread, go to the "General Discussions" section, create your thread in the thread field of main screen. 
+                Users can reply to your threads and can engage in a healthy dicussion.</div>
             </div>
 
             <div>

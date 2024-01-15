@@ -11,8 +11,6 @@ import {
 } from 'firebase/firestore';
 import { fireDB } from '../../../firebase/FirebaseConfig';
 
-
-
 function Dashboard() {
     const context = useContext(myContext)
     const { mode } = context
@@ -55,6 +53,8 @@ function Dashboard() {
             });
 
     }, [])
+
+    
     return (
         <Layout>
             <section className="text-gray-600 body-font mt-10 mb-10">

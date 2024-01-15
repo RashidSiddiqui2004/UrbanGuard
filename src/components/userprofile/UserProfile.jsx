@@ -134,8 +134,8 @@ const UserProfile = () => {
                 ) : (
                     // Render a message if there are no user posts
                     <div>
-                        <h2 className='text-center text-3xl text-white my-10'>You have no posts right now!</h2>
-                        <h2 className='text-center text-3xl text-white my-10'>Write your first post now.</h2>
+                        <h2 className='text-center text-xl lg:text-3xl text-white my-10'>You have no posts right now!</h2>
+                        <h2 className='text-center text-xl lg:text-3xl text-white my-10'>Write your first post now.</h2>
                     </div>
                 ) :
                 <div>

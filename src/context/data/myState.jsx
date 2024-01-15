@@ -30,6 +30,12 @@ function myState(props) {
     const sendReport = async (uid, u_name, incidentType, description, latitude,
         longitude, imageUrl, anonymousReporting) => {
 
+        if (description === "" || latitude === -1 || longitude ===-1 || uid == null || 
+            incidentType === "") {
+            toast.error("All fields are required")
+            return false;
+        }
+
         const reportsRef = collection(fireDB, 'reports'); // Reference to the reports collection
 
         // Create a new report document
@@ -82,6 +88,47 @@ function myState(props) {
         await setDoc(doc(reportsRef), report);
 
         return true;
+    }
+
+    const [reports, setReports] = useState([]);
+
+    const getAllReports = async () => {
+        setLoading(true)
+
+        try {
+            const q = query(
+                collection(fireDB, 'reports'),
+                orderBy('timestamp', 'desc')
+            );
+
+            const data = onSnapshot(q, (QuerySnapshot) => {
+                let reportsArray = [];
+                QuerySnapshot.forEach((doc) => {
+                    reportsArray.push({ ...doc.data(), id: doc.id });
+                });
+                setReports(reportsArray);
+                setLoading(false);
+            });
+
+            return () => data;
+
+        } catch (error) {
+            setLoading(false)
+        }
+
+    }
+
+    const deleteReport = async (report) => {
+        setLoading(true)
+        try {
+            await deleteDoc(doc(fireDB, 'reports', report.id))
+            toast.success('Report deleted successfully')
+            getAllReports();
+            setLoading(false)
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
     }
 
     const [posts, setPosts] = useState({
@@ -821,11 +868,13 @@ function myState(props) {
     const [searchkey, setSearchkey] = useState('')
     const [categoryType, setPostCategory] = useState('')
 
+    const [reportType, setReportType] = useState('')
+
     return (
         <MyContext.Provider value={{
             mode, toggleMode, loading, setLoading,
-            sendReport, posts, setPosts, addPost, post,
-            myposts, getMyPosts,
+            sendReport, reports, getAllReports, reportType, setReportType,deleteReport,
+            posts, setPosts, addPost, post, myposts, getMyPosts,
             deletePost, user, profiles, setProfiles, updateProfile,
             userProfile, setUserprofile, addProfile,
             getProfileData, searchkey,

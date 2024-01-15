@@ -4,6 +4,7 @@ import myContext from '../context/data/myContext';
 import { Link } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react'
 import { RxCross2 } from 'react-icons/rx'
+import ADMIN_EMAIL from '../utils/AdminDetails';
 
 function Navbar() {
 
@@ -81,8 +82,8 @@ function Navbar() {
                   </div> : ""}
 
 
-                  {user?.user?.email === "siddiqui20042007@gmail.com" ? <div className="flow-root">
-                    <Link to={'/dashboard'} className="-m-2 block p-2 font-medium text-gray-900" style={{ color: mode === 'dark' ? 'white' : '', }}>
+                  {user?.user?.email === ADMIN_EMAIL ? <div className="flow-root">
+                    <Link to={'/dashboard'} className="mt-[1px] -ml-2 block p-2 font-medium text-gray-900" style={{ color: mode === 'dark' ? 'white' : '', }}>
                       Admin
                     </Link>
                   </div> : ""}
@@ -97,7 +98,7 @@ function Navbar() {
                     </Link>
                   </div>}
                   <div className="flow-root">
-                    <Link to={'/'} className="-m-2 block p-2 font-medium text-gray-900 cursor-pointer">
+                    <Link to={'/user-profile'} className="-m-2 block p-2 font-medium text-gray-900 cursor-pointer">
                       <img
                         className="inline-block w-10 h-10 rounded-full"
                         src="https://res.cloudinary.com/drlkkozug/image/upload/v1705071144/y9evmbpdht5ezj3fkal9.jpg"
@@ -165,7 +166,7 @@ function Navbar() {
                     Signup
                   </Link>)}
 
-                  {user?.user?.email === 'siddiqui20042007@gmail.com' ?
+                  {user?.user?.email === ADMIN_EMAIL ?
                     <Link to={'/dashboard'} className="text-sm font-medium text-white">
                       Admin
                     </Link> : ""}

@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -25,6 +25,8 @@ import CommunityDiscussions from './components/communityforum/discussion-forum/C
 import DiscussionReply from './components/communityforum/discussion-forum/DiscussionReply';
 import UserProfile from './components/userprofile/UserProfile';
 import QnA from './components/communityforum/qna/QnA';
+import AdminDashboard from './components/admin/adminDashboard';
+import ADMIN_EMAIL from './utils/AdminDetails';
 
 function App() {
   return (
@@ -122,18 +124,17 @@ function App() {
             </ProtectedRoute>
           } />
 
-          {/* 
+
           <Route path="/dashboard" element={
             <ProtectedRouteForAdmin>
-              <Dashboard />
+              <Layout>
+                <AdminDashboard />
+              </Layout>
             </ProtectedRouteForAdmin>
-          } /> */}
+          } />
 
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
-
-    
-          {/* <Route path='/about' element={<AboutUsPage />} /> */}
 
           <Route path="/*" element={<NoPage />} />
 
@@ -164,7 +165,7 @@ export const ProtectedRoute = ({ children }) => {
 const ProtectedRouteForAdmin = ({ children }) => {
   const admin = JSON.parse(localStorage.getItem('user'))
 
-  if (admin.user.email === 'siddiqui20042007@gmail.com') {
+  if (admin.user.email === ADMIN_EMAIL) {
     return children
   }
   else {

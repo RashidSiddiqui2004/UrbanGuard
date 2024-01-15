@@ -66,12 +66,20 @@ const DiscussionReply = () => {
     const handleNameClick = (name) => {
         setSelectedName(name);
         setIsMenuOpen(false);
-        setReplyText((prevText) => prevText + ` @${name}` + ' ');
+        setReplyText((prevText) => prevText + `${name}` + ' ');
     };
-
 
     const handleReplyChange = (e) => {
         setReplyText(e.target.value);
+
+        const reply = e.target.value; 
+        const lastletter = reply[reply.length -1]
+        
+        if(lastletter=='@'){
+            setIsMenuOpen(true);
+        }else if(isMenuOpen===true){
+            setIsMenuOpen(false);
+        }
     };
 
     const user = JSON.parse(localStorage.getItem('user')).user.uid
