@@ -19,7 +19,13 @@ Urban Guard is a comprehensive safety and emergency management application desig
   
 ## Website URL 
 
-[Add website link here]
+[https://myfirstproject-60cfb.web.app/]
+
+## Prototype Designing 
+
+- Canva Design link [https://www.canva.com/design/DAF5rSi1q_c/b04oan0cmdj7FiK1raUP-w/edit?utm_content=DAF5rSi1q_c&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton]
+
+- It contains UML digram, screenshots from the deployed website.
 
 ## Installation
 
@@ -33,31 +39,35 @@ Urban Guard is a comprehensive safety and emergency management application desig
 
    ```bash
    git clone  https://github.com/RashidSiddiqui2004/UrbanGuard.git
-  
+  ```
 
 2. Navigate to the project directory:
 
   ```bash
   cd urban-guard
-
+  ```
 
 3. Install dependencies:
 
  ```bash
  npm install
+```
 
- 
-4. Start the application:
+4. Configure Firebase and Admin Details:
+
+Setup your Firebase environment configuration by editing the file UrbanGuard/src/firebase/FirebaseConfig.jsx. A sample file is provided for reference.
+
+Provide the admin email-ID by editing the file UrbanGuard/src/utils/AdminDetails.js.
+
+5. Start the application:
 
    ```bash
   npm run dev
+  ```
 
 
 ### Dependencies
 - React.js [https://react.dev/]
 - Tailwind css [https://tailwindcss.com/docs/installation]
 - Firebase [https://firebase.google.com/]
-
-## License
-This project is licensed under the MIT License.
 
