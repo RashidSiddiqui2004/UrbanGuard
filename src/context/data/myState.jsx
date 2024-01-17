@@ -118,6 +118,36 @@ function myState(props) {
 
     }
 
+    const getMyDept = async (email) => {
+
+        // departments -> search for your email
+        const deptQuery = query(
+            collection(fireDB, 'departments'),
+            where('emailID', '==', email)
+        );
+
+        const deptSnapshot = await getDocs(deptQuery);
+ 
+        if (!deptSnapshot.empty) {
+
+            const deptDocument =  deptSnapshot.docs[0]._document.data.value.mapValue.fields;
+ 
+            const data = {department : deptDocument.department.stringValue,
+                departmentName: deptDocument.departmentName.stringValue
+            };
+
+            return data;
+        }
+
+        return false;
+    }
+
+    const getSpecificReports = async () => {
+
+    
+        return true;
+    }
+
     const deleteReport = async (report) => {
         setLoading(true)
         try {
@@ -874,6 +904,7 @@ function myState(props) {
         <MyContext.Provider value={{
             mode, toggleMode, loading, setLoading,
             sendReport, reports, getAllReports, reportType, setReportType,deleteReport,
+            getMyDept,getSpecificReports,
             posts, setPosts, addPost, post, myposts, getMyPosts,
             deletePost, user, profiles, setProfiles, updateProfile,
             userProfile, setUserprofile, addProfile,

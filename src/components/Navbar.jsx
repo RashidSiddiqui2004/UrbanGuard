@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react'
 import { RxCross2 } from 'react-icons/rx'
 import ADMIN_EMAIL from '../utils/AdminDetails';
+import isRegisteredUser from '../utils/RegisteredDeptEmails';
 
 function Navbar() {
 
@@ -170,6 +171,12 @@ function Navbar() {
                     <Link to={'/dashboard'} className="text-sm font-medium text-white">
                       Admin
                     </Link> : ""}
+
+                  {isRegisteredUser(user?.user?.email) ? <div className="flow-root">
+                    <Link to={'/departments-reports'} className="text-sm font-medium text-white">
+                      Department Reports
+                    </Link>
+                  </div> : ""}
 
                   {user ? <a onClick={logout} className="text-sm font-medium cursor-pointer text-white">
                     Logout

@@ -39,13 +39,13 @@ Urban Guard is a comprehensive safety and emergency management application desig
 
    ```bash
    git clone  https://github.com/RashidSiddiqui2004/UrbanGuard.git
-  ```
+```
 
 2. Navigate to the project directory:
 
   ```bash
   cd urban-guard
-  ```
+```
 
 3. Install dependencies:
 
@@ -63,7 +63,7 @@ Provide the admin email-ID by editing the file UrbanGuard/src/utils/AdminDetails
 
    ```bash
   npm run dev
-  ```
+```
 
 
 ### Dependencies

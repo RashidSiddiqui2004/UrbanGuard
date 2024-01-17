@@ -10,9 +10,7 @@ const CommunityPosts = () => {
     const context = useContext(myContext)
     const { post, searchkey, setPostCategory, categoryType } = context;
 
-
     const uniqueCategories = [...new Set(post.map(item => item.category))];
-
 
     const filteredPosts = post.filter((obj) => obj.title.toLowerCase().includes(searchkey.toLowerCase()) ||
         obj.tags.toLowerCase().includes(searchkey.toLowerCase()))

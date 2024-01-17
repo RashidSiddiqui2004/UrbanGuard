@@ -75,6 +75,8 @@ const Reporting = () => {
 
         setDescription(content);
 
+        console.log(content);
+
         // if (!(url === null)) setImageUrl(url);
 
         setShowPreview(true);
@@ -133,6 +135,7 @@ const Reporting = () => {
 
                     <form className="space-y-4">
 
+                        {/* report type */}
                         <div>
                             <div className="mb-4">
 

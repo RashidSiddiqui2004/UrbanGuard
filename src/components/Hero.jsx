@@ -6,8 +6,7 @@ import { Link } from 'react-router-dom'
 const Hero = () => {
 
     const user = JSON.parse(localStorage.getItem('user'));
-
-
+    
     return (
         <div className='text-center min-h-[300px] mt-20 merriweather overflow-hidden'>
 
@@ -51,14 +50,15 @@ const Hero = () => {
 
                         <Link to={'/signup'}>
                             <button className='bg-slate-800 text-white flex gap-3 border-2 border-white
-                    py-5 px-3 lg:px-6 shadow-md shadow-slate-500 text-xl md:text-2xl'>
+                        py-5 px-3 lg:px-16 shadow-md shadow-slate-500 text-xl md:text-2xl'>
+                        Register Now
                             </button>
                         </Link>
 
-                        <Link to={'/login'}>
+                        {/* <Link to={'/login'}>
                             <button className='bg-green-400 text-slate-900 flex gap-3 border-2 border-white
                     py-5 px-3 lg:px-6 shadow-md shadow-slate-500 text-xl md:text-2xl'>Log-In</button>
-                        </Link>
+                        </Link> */}
 
                     </div>
                     :

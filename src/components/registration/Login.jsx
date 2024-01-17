@@ -40,20 +40,26 @@ function Login() {
 
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         const isUserloggedin = localStorage.getItem('user');
-        
-        if(isUserloggedin){
+
+        if (isUserloggedin) {
             navigate('/report');
-        } 
-    },[])
+        }
+    }, [])
 
     return (
         <div className=' flex justify-center items-center h-screen'>
             {loading && <Loader />}
-            <div className=' bg-gray-800 px-10 py-10 rounded-xl '>
-                <div className="">
-                    <h1 className='text-center text-white text-xl mb-4 font-bold'>Login</h1>
+            <div className=' bg-gray-800 px-10 py-10 rounded-xl'>
+
+                <div className="flex justify-center merriweather">
+                    <img src="/logo.jpg" alt="Urban Guard Logo"
+                        className="w-12 h-12 rounded-full mb-2 ml-10" />
+                    <h1 className="text-xl font-semibold mt-3 ml-2">Urban Guard</h1>
+                </div>
+                <div>
+                    <h1 className='text-center text-white text-xl mb-4 merriweather font-bold'>Login</h1>
                 </div>
                 <div>
                     <input type="email"
@@ -81,7 +87,7 @@ function Login() {
                     </button>
                 </div>
                 <div>
-                    <h2 className='text-white'>Don't have an account <Link className=' text-yellow-500 font-bold' to={'/signup'}>Signup</Link></h2>
+                    <h2 className='text-white'>Don't have an account ?  <Link className=' text-yellow-500 font-bold' to={'/signup'}>Signup</Link></h2>
                 </div>
             </div>
         </div>

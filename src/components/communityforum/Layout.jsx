@@ -15,7 +15,7 @@ const Layout = ({ children }) => {
         <div className='flex flex-row min-h-screen overflow-hidden overflow-x-hidden'>
 
             {/* Sidebar */}
-            <div className={`lg:w-[22%] bg-slate-400 ${isSidebarOpen ? 'block' : 'hidden'} lg:block overflow-hidden`}>
+            <div className={`w-[30%] xl:w-[22%] bg-slate-400 ${isSidebarOpen ? 'block' : 'hidden'} lg:block overflow-hidden`}>
                 <Sidebar />
             </div>
 

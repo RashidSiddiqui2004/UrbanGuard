@@ -25,8 +25,10 @@ import CommunityDiscussions from './components/communityforum/discussion-forum/C
 import DiscussionReply from './components/communityforum/discussion-forum/DiscussionReply';
 import UserProfile from './components/userprofile/UserProfile';
 import QnA from './components/communityforum/qna/QnA';
-import AdminDashboard from './components/admin/adminDashboard';
+import AdminDashboard from './components/admin/AdminDashboard';
 import ADMIN_EMAIL from './utils/AdminDetails';
+import isRegisteredUser from './utils/RegisteredDeptEmails';
+import DepartmentAdminDB from './components/admin/DepartmentAdminDb';
 
 function App() {
   return (
@@ -133,6 +135,14 @@ function App() {
             </ProtectedRouteForAdmin>
           } />
 
+          <Route path="/departments-reports" element={
+            <ProtectedRouteForDepartments>
+              <Layout>
+                <DepartmentAdminDB />
+              </Layout>
+            </ProtectedRouteForDepartments>
+          } />
+
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
 
@@ -167,6 +177,20 @@ const ProtectedRouteForAdmin = ({ children }) => {
 
   if (admin.user.email === ADMIN_EMAIL) {
     return children
+  }
+  else {
+    return <Navigate to={'/login'} />
+  }
+
+}
+
+// department-wise
+
+const ProtectedRouteForDepartments = ({ children }) => {
+  const admin = JSON.parse(localStorage.getItem('user'))
+
+  if (isRegisteredUser(admin.user.email) === true) {
+    return children;
   }
   else {
     return <Navigate to={'/login'} />

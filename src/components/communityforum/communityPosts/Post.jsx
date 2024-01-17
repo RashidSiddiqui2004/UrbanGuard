@@ -8,6 +8,7 @@ import CommentForm from './CommentForm';
 import CommentSection from './CommentSection';
 import RenderHTMLContent from '../../../utils/RenderHTMLContent';
 import { MdOutlineDangerous } from "react-icons/md";
+import { toast } from 'react-toastify';
 
 const Post = ({ post }) => {
 
@@ -18,7 +19,7 @@ const Post = ({ post }) => {
 
     const context = useContext(myContext);
 
-    const { setLoading, loading, followUser, flagPost} = context;
+    const { followUser, flagPost} = context;
 
     const userID = JSON.parse(localStorage.getItem('user')).user.uid;
 
@@ -28,7 +29,7 @@ const Post = ({ post }) => {
             let postId;
 
             if (auth.currentUser == null) {
-                // toast.dark('Please log in/sign up to like posts.');
+                toast.dark('Please log in/sign up to like posts.');
                 return;
             }
             try {
@@ -46,8 +47,10 @@ const Post = ({ post }) => {
                         likes: updatedVotes,
                     };
 
+                    await setDoc(doc(fireDB, 'posts', id), updatedPost);
+
                     // setPosts(updatedPost);
-                    // toast.dark('Post Downvoted 👎');
+                    toast.dark('Post Downvoted 👎');
                     await deleteDoc(likeRef);
                 } else {
                     // The user hasn't liked the post yet, so "like" it
@@ -60,7 +63,7 @@ const Post = ({ post }) => {
                     // Update the post in the database
                     await setDoc(doc(fireDB, 'posts', id), updatedPost);
                     // setPosts(updatedPost);
-                    // toast.success('Post Upvoted 👍');
+                    toast.success('Post Upvoted 👍');
                     await setDoc(likeRef, { userId, postId });
                 }
             } catch (error) {
@@ -77,10 +80,27 @@ const Post = ({ post }) => {
         await followUser(userID, authorId, author);
     }
 
+    function debounce(func, delay) {
+        let timeoutId;
+
+        return function () {
+            const context = this;
+            const args = arguments;
+
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(function () {
+                func.apply(context, args);
+            }, delay);
+        };
+    }
+
+    const throttleFlagPost = debounce(function() {
+        flagPost(userID,id);
+    }, 5000);
+
     return (
 
         <div
-            //  onClick={() => window.location.href = `/post/${id}`}
             className="bg-slate-200 rounded-lg p-6 shadow-md max-w-2xl mx-auto mt-8
              overflow-y-hidden w-[100%]">
                 
@@ -100,7 +120,7 @@ const Post = ({ post }) => {
                     <button className="text-slatw-8900 bg-blue-500 hover:underline"
                         onClick={followActivity}>Follow</button>
                     <button className="bg-red-400 text-white hover:underline flex"
-                    onClick={() => flagPost(userID,id)}>Flag
+                    onClick={() => throttleFlagPost()}>Flag
                         <MdOutlineDangerous className='mt-[1px] ml-2 text-2xl' /></button>
                 </div>
 
@@ -118,7 +138,6 @@ const Post = ({ post }) => {
                     <span className="bg-blue-500 text-slate-800 px-5 py-2 rounded-xl">{category}</span>
                 </div>
             </div>
-
 
 
             {/* Media (Image or Video) */}

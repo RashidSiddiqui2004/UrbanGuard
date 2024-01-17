@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { ImAttachment } from "react-icons/im";
 import RenderHTMLContent from '../../utils/RenderHTMLContent';
 import { MdNextPlan, MdDeleteOutline } from "react-icons/md";
-
+import { toast } from 'react-toastify';
 
 const Report = ({ reporttype, description, latitude, longitude,
     anonymousReporting, images, deleteReport }) => {
@@ -21,25 +21,41 @@ const Report = ({ reporttype, description, latitude, longitude,
         return;
     }
 
+    const reportFiled = () => {
+        toast.success("Report filed successfully!")
+    }
+
     return (
 
         <div className="mt-4 p-4 border border-gray-300 rounded-lg
              bg-slate-900 w-[80%] shadow-sm shadow-blue-400 mx-[10%]">
             <h3 className="text-xl font-semibold mb-2 text-center">Report</h3>
 
-            <div className='flex flex-row'>
+            <div className='flex flex-row justify-center'>
 
-                <button onClick={deleteReport} className='bg-inherit text-red-600 text-xl'><MdDeleteOutline /></button>
+                {/* <button onClick={deleteReport} className='bg-inherit text-red-600 text-xl'><MdDeleteOutline /></button> */}
 
-                <h2 className='bg-red-500 text-white px-8 py-2 text-center mx-auto
-            lg:ml-[70%] w-fit rounded-lg'>
+                <button onClick={reportFiled} className='bg-inherit text-green-600 text-sm md:text-xl
+                    border-2 px-3 md:px-6 border-gray-400 shadow-sm shadow-slate-500 transition-all
+                    hover:shadow-md hover:shadow-slate-400'>
+                    Filed
+                </button>
+
+                <button onClick={deleteReport} className='bg-inherit text-red-600 text-sm md:text-xl
+                    border-2 px-3 md:px-6 border-gray-400 ml-8 shadow-sm shadow-slate-500 transition-all
+                    hover:shadow-md hover:shadow-slate-400'>
+                    Delete Report
+                </button>
+
+                <h2 className='bg-red-500 hidden md:block text-white px-8 py-2 text-center mx-auto
+            lg:ml-[30%] w-fit rounded-lg my-auto'>
                     {reporttype}
                 </h2>
 
             </div>
 
 
-            <p className="mb-1 mt-3 lg:mt-0">
+            <p className="mb-1 mt-3 md:mt-10 lg:mt-5">
                 Location:{' '}
                 {latitude
                     ? `Lat: ${latitude}, Lng: ${longitude}`

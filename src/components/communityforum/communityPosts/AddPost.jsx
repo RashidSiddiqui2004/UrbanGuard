@@ -88,7 +88,7 @@ function AddPost() {
                     <div className='flex gap-4 justify-center'>
                         <h1 className='text-center text-white text-xl mb-4 font-bold'>Publish Post</h1>
 
-                        <span className='-my-3'><img src="addpost.png" alt="New Post" width={50} srcSet="" /></span>
+                        <span className='-my-3'><img src="https://res.cloudinary.com/drlkkozug/image/upload/v1705042854/ynrer4jfk9ywantavge8.png" alt="New Post" width={50} srcSet="" /></span>
                     </div>
 
 

@@ -111,8 +111,6 @@ const CommunityForumPoster = () => {
             </div>
 
 
-
-
         </div>
     )
 }

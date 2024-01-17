@@ -1,14 +1,12 @@
 
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 // import { motion } from 'framer-motion'; 
 import { auth } from '../../firebase/FirebaseConfig';
-import myContext from '../../context/data/myContext';
 import getUsernameByUID from '../../utils/GetUser';
+import { MdCircleNotifications } from "react-icons/md";
 
 const Sidebar = () => {
-
-    const context = useContext(myContext)
 
     // to get the username from Database (optimised using caching)
     // async function getUsernameByUID(uid) {
@@ -46,7 +44,7 @@ const Sidebar = () => {
             const cacheCall = localStorage.getItem("username");
 
             if (cacheCall == null) {
- 
+
                 let uid = auth.currentUser.uid;
 
                 getUsernameByUID(uid).then((username) => {
@@ -71,8 +69,11 @@ const Sidebar = () => {
         <div className='fixed'>
 
             <Link to={'/'}>
-                <h2 className='text-md lg:text-xl mt-4 text-slate-800 
+                <div className='flex justify-center'>
+                    <h2 className='text-md lg:text-xl mt-4 text-slate-800 
         text-center font-bold my-5 hidden lg:block'>Urban Guard</h2>
+                    <MdCircleNotifications className='my-5 mx-2 text-2xl text-slate-800'/>
+                </div>
             </Link>
 
             <div
@@ -101,16 +102,16 @@ const Sidebar = () => {
                 </Link>
             </div>
 
-            {/* <div
+            <div
                 initial={{ x: -200 }}
                 animate={{ x: 0 }}
                 transition={{
                     duration: 1.5,
                 }} className='bg-slate-800 py-5 px-4 mx-6 rounded-lg my-3 shadow-md shadow-violet-500 hover:scale-95 transition-all'>
-                <Link to={'/community-safety-tips'}>
-                    <h3 className='text-center text-2xl text-white'>Safety Alerts</h3>
+                <Link to={'/notifications'}>
+                    <h3 className='text-center text-2xl text-white'>Notifications</h3>
                 </Link>
-            </div> */}
+            </div>
 
             <div
                 initial={{ x: -200 }}
@@ -152,17 +153,17 @@ const Sidebar = () => {
             <div className="mt-6 flex-col items-center merriweather hidden lg:flex
             justify-between h-full bg-gray-800 text-white p-4 flex-grow">
                 <div className="">
-                    <img src="/logo.jpg" alt="Urban Guard Logo" 
-                    className="w-12 h-12 rounded-full mb-2 ml-10" />
+                    <img src="/logo.jpg" alt="Urban Guard Logo"
+                        className="w-12 h-12 rounded-full mb-2 ml-10" />
                     <h1 className="text-xl font-semibold">Urban Guard</h1>
                 </div>
- 
+
                 <nav className="space-y-1">
                     <a href="/" className="block text-sm">Home</a>
                     <a href="/report" className="block text-sm">Incident Reports</a>
-                    <a href="/emergency-resources" className="block text-sm">Resources</a> 
+                    <a href="/emergency-resources" className="block text-sm">Resources</a>
                 </nav>
- 
+
                 <div className="text-center mt-6">
                     <p className="text-sm mb-2">Contact us: contact@urbanguard.com</p>
                     <p className="text-xs">&copy; {new Date().getFullYear()} Urban Guard. All rights reserved.</p>
