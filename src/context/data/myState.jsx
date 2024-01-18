@@ -30,7 +30,7 @@ function myState(props) {
     const sendReport = async (uid, u_name, incidentType, description, latitude,
         longitude, imageUrl, anonymousReporting) => {
 
-        if (description === "" || latitude === -1 || longitude ===-1 || uid == null || 
+        if (description === "" || latitude === -1 || longitude === -1 || uid == null ||
             incidentType === "") {
             toast.error("All fields are required")
             return false;
@@ -127,12 +127,13 @@ function myState(props) {
         );
 
         const deptSnapshot = await getDocs(deptQuery);
- 
+
         if (!deptSnapshot.empty) {
 
-            const deptDocument =  deptSnapshot.docs[0]._document.data.value.mapValue.fields;
- 
-            const data = {department : deptDocument.department.stringValue,
+            const deptDocument = deptSnapshot.docs[0]._document.data.value.mapValue.fields;
+
+            const data = {
+                department: deptDocument.department.stringValue,
                 departmentName: deptDocument.departmentName.stringValue
             };
 
@@ -143,10 +144,88 @@ function myState(props) {
     }
 
     const getSpecificReports = async () => {
-
-    
         return true;
     }
+
+    const getReportbyId =  async (reportID) => {
+        const reportRef = doc(fireDB, 'reports', reportID); // Replace 'threads' with your actual collection name
+
+        try {
+            const reportDoc = await getDoc(reportRef);
+
+            if (reportDoc.exists()) {
+                // Extract thread data from the document
+                const data = { id: reportDoc.id, ...reportDoc.data() };
+
+                console.log(data);
+                return data;
+            }  
+        } catch (error) {
+            return null;
+        }
+    }
+
+    const message = "Your report has been filed."
+
+    const addNotification = async (userid, reportID) => {
+
+        const newNotification = { id: Date.now(), message };
+
+        // userID, reportID
+
+        const notificationRef = collection(fireDB, 'notifications'); // Reference to the reports collection
+
+        const notification = {
+            userId: userid,
+            reportID: reportID,
+            date: new Date().toLocaleString(
+                "en-US",
+                {
+                    month: "short",
+                    day: "2-digit",
+                    year: "numeric",
+                }
+            )
+        };
+
+
+        await setDoc(doc(notificationRef), notification);
+
+        // Add the new notification to the array
+        setNotifications((prevNotifications) => [...prevNotifications, newNotification]);
+    };
+
+    const [notifications, setNotifications] = useState([]);
+
+    const getMyNotifications = async (userid) => {
+        const notificationRef = collection(fireDB, 'notifications');
+
+        const notifQuery = query(
+            notificationRef,
+            where('userId', '==', userid)
+        );
+
+        try {
+            const notifSnapshot = await getDocs(notifQuery);
+
+            // Access the documents from the snapshot
+            const notifications = [];
+            
+            notifSnapshot.forEach(doc => {
+                notifications.push({ id: doc.id, ...doc.data() });
+            }); 
+
+            setNotifications(notifications);
+
+            return true;
+        } catch (error) { 
+            return false;
+        }
+    };
+
+    // const removeNotification = (notificationId) => {
+    //     setNotifications((prevNotifications) => prevNotifications.filter((n) => n.id !== notificationId));
+    // };
 
     const deleteReport = async (report) => {
         setLoading(true)
@@ -903,8 +982,9 @@ function myState(props) {
     return (
         <MyContext.Provider value={{
             mode, toggleMode, loading, setLoading,
-            sendReport, reports, getAllReports, reportType, setReportType,deleteReport,
-            getMyDept,getSpecificReports,
+            sendReport, reports, getAllReports, reportType, setReportType, deleteReport,
+            getMyDept, getSpecificReports, addNotification, getMyNotifications,notifications,
+            getReportbyId,
             posts, setPosts, addPost, post, myposts, getMyPosts,
             deletePost, user, profiles, setProfiles, updateProfile,
             userProfile, setUserprofile, addProfile,

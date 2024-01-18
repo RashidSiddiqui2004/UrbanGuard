@@ -11,23 +11,27 @@ const EmergencyResources = () => {
     const emergencyServicesData = [
         {
             title: 'Local Police Department',
-            contactNumber: '123-456-7890',
+            contactNumber: '100',
             description: 'Dedicated to ensuring the safety and security of our community.',
+            url:"https://dmsouthwest.delhi.gov.in/police/"
         },
         {
             title: 'Fire Department',
-            contactNumber: '987-654-3210',
+            contactNumber: '101',
             description: 'Responding to fire emergencies and promoting fire safety in the neighborhood.',
+            url:"https://delhi.gov.in/page/fire-services"
         },
         {
             title: 'Emergency Medical Services (EMS)',
-            contactNumber: '555-123-4567',
+            contactNumber: '108',
             description: 'Providing swift medical assistance during emergencies.',
+            url:"https://zhl.org.in/blog/medical-emergency-numbers-india/"
         },
         {
             title: 'National Emergency Hotline',
-            contactNumber: '911',
+            contactNumber: '112',
             description: 'Connect with emergency services nationwide for immediate assistance.',
+            url:"https://indianhelpline.co.in/list-of-emergency-numbers-in-india-3/"
         },
     ];
 
@@ -35,25 +39,25 @@ const EmergencyResources = () => {
         {
           title: 'Earthquake',
           description: 'Guidelines on what to do during an earthquake.',
-          link: '#',
+          link: "https://www.ready.gov/earthquakes",
           image: earthquake,
         },
         {
           title: 'Flood',
           description: 'Guidelines on how to stay safe during a flood.',
-          link: '#',
+          link: 'https://www.ready.gov/floods',
           image: flood,
         },
         {
           title: 'Hurricane',
           description: 'Steps to take before and during a hurricane.',
-          link: '#',
+          link: 'https://www.ready.gov/hurricanes',
           image: hurricane,
         }, 
         {
             title: 'Thunderstorm',
             description: 'Steps to take before and during a thunderstorm.',
-            link: '#',
+            link: 'https://www.ready.gov/thunderstorms-lightning',
             image: thunderstorm
           }, 
       ];
@@ -69,11 +73,14 @@ const EmergencyResources = () => {
                 {emergencyServicesData.map((service, index) => (
                     <div
                         key={index}
-                        className='bg-white rounded-2xl h-60 w-64 hover:bg-gray-300 transition-all p-4'
+                        className='bg-white rounded-2xl w-64 hover:bg-gray-300 
+                        transition-all p-4 flex-grow h-full flex flex-col'
                     >
                         <h2 className='text-xl font-bold mb-2 text-slate-900'>{service.title}</h2>
                         <p className='text-gray-800 mb-4'>{service.description}</p>
                         <p className='text-slate-800 font-semibold text-xl'>{`Contact: ${service.contactNumber}`}</p>
+
+                        <p className='text-green-500 text-lg mt-2 cursor-pointer'><a href={service?.url} target='_blank'>Click to know more</a></p>
                     </div>
                 ))}
 

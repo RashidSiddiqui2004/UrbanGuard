@@ -59,9 +59,10 @@ const DepartmentAdminDB = () => {
 
             {(filteredReports.length > 0) ? (
                 filteredReports.map((reportItem, index) => {
-                    const { incidentType, imageUrl, latitude, longitude,
-                        anonymousReporting, description } = reportItem;
 
+                    const { incidentType, imageUrl, latitude, longitude,
+                        anonymousReporting, description, uid,id } = reportItem;
+ 
                     const handleDelete = async () => {
                         deleteReport(reportItem);
                     }
@@ -76,6 +77,8 @@ const DepartmentAdminDB = () => {
                                 anonymousReporting={anonymousReporting}
                                 description={description}
                                 deleteReport={handleDelete}
+                                reportUserID={uid}
+                                reportID={id}
                             />
                         </div>
                     );

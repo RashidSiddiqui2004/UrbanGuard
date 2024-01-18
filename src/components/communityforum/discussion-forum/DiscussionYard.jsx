@@ -98,8 +98,7 @@ const DiscussionYard = ({ thread, myPost }) => {
                 <button
                     className="mt-2
                     flex bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                    onClick={() => {
-                    }}
+                   
                 > Reply
                     <FaReply className='text-sm ml-3 mt-1 rotate-180' />
                 </button>

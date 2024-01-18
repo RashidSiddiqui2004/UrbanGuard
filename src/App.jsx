@@ -29,6 +29,8 @@ import AdminDashboard from './components/admin/AdminDashboard';
 import ADMIN_EMAIL from './utils/AdminDetails';
 import isRegisteredUser from './utils/RegisteredDeptEmails';
 import DepartmentAdminDB from './components/admin/DepartmentAdminDb';
+import NotificationSection from './components/communityforum/notifications/NotificationSection';
+import MyReport from './components/communityforum/notifications/MyReport';
 
 function App() {
   return (
@@ -101,6 +103,14 @@ function App() {
             </ProtectedRoute>
           } />
 
+          <Route path="/myreport/:id" element={
+            <ProtectedRoute>
+              <Layout>
+                <MyReport/>
+              </Layout>
+            </ProtectedRoute>
+          } />
+
           <Route path="/community-posts" element={
             <ProtectedRoute>
               <Layout>
@@ -122,6 +132,14 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <QnA />
+              </Layout>
+            </ProtectedRoute>
+          } />
+
+          <Route path="/notifications" element={
+            <ProtectedRoute>
+              <Layout>
+                <NotificationSection />
               </Layout>
             </ProtectedRoute>
           } />

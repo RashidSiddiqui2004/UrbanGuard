@@ -1,10 +1,11 @@
 
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 // import { motion } from 'framer-motion'; 
 import { auth } from '../../firebase/FirebaseConfig';
 import getUsernameByUID from '../../utils/GetUser';
 import { MdCircleNotifications } from "react-icons/md";
+import myContext from '../../context/data/myContext';
 
 const Sidebar = () => {
 
@@ -37,32 +38,54 @@ const Sidebar = () => {
 
     const [user_name, setUser] = useState('');
 
-    useEffect(() => {
+    const context = useContext(myContext);
 
-        function usernameFunc() {
+    const { getMyNotifications,notifications} = context;
 
-            const cacheCall = localStorage.getItem("username");
+    useEffect(() => { 
+ 
+        const fetchData = async () => {
+            // Get user ID from local storage
+            const storedUserID = localStorage.getItem('user');
+            const userID = storedUserID ? JSON.parse(storedUserID).user.uid : null;
 
-            if (cacheCall == null) {
-
-                let uid = auth.currentUser.uid;
-
-                getUsernameByUID(uid).then((username) => {
-                    if (username) {
-                        setUser(username);
-                        localStorage.setItem("username", username);
-                    } else {
-                        console.log(`User with UID ${uid} not found.`);
+            // Fetch username and set it to the state and local storage
+            const fetchUsername = async () => {
+                const cachedUsername = localStorage.getItem('username');
+                if (cachedUsername == null) {
+                    try {
+                        const uid = auth.currentUser.uid;
+                        const username = await getUsernameByUID(uid);
+                        if (username) {
+                            setUser(username);
+                            localStorage.setItem('username', username);
+                        } else {
+                            console.log(`User with UID ${uid} not found.`);
+                        }
+                    } catch (error) {
+                        console.error('Error fetching username:', error);
                     }
-                });
-            }
-            else {
-                setUser(cacheCall);
-            }
+                } else {
+                    setUser(cachedUsername);
+                }
+            };
 
-        }
+            // Fetch notifications
+            const fetchNotifications = async () => {
+                try {
+                    const flag = await getMyNotifications(userID); 
+                } catch (error) {
+                    console.error('Error fetching notifications:', error);
+                }
+            };
 
-        usernameFunc();
+            // Execute the functions
+            await fetchUsername();
+            await fetchNotifications();
+        };
+
+        fetchData();
+
     }, []);
 
     return (
@@ -71,8 +94,17 @@ const Sidebar = () => {
             <Link to={'/'}>
                 <div className='flex justify-center'>
                     <h2 className='text-md lg:text-xl mt-4 text-slate-800 
-        text-center font-bold my-5 hidden lg:block'>Urban Guard</h2>
-                    <MdCircleNotifications className='my-5 mx-2 text-2xl text-slate-800'/>
+                        text-center font-bold my-5 hidden lg:block'>Urban Guard</h2>
+                    {
+                        notifications.length > 0
+                            ?
+                            <Link to={'/notifications'}>
+                                <MdCircleNotifications className='my-5 mx-2 text-2xl text-slate-800' />
+                            </Link>
+                            :
+                            ""
+                    }
+
                 </div>
             </Link>
 
@@ -107,35 +139,12 @@ const Sidebar = () => {
                 animate={{ x: 0 }}
                 transition={{
                     duration: 1.5,
-                }} className='bg-slate-800 py-5 px-4 mx-6 rounded-lg my-3 shadow-md shadow-violet-500 hover:scale-95 transition-all'>
-                <Link to={'/notifications'}>
-                    <h3 className='text-center text-2xl text-white'>Notifications</h3>
-                </Link>
-            </div>
-
-            <div
-                initial={{ x: -200 }}
-                animate={{ x: 0 }}
-                transition={{
-                    duration: 1.5,
                 }}
                 className='bg-slate-800 py-5 px-4 mx-6 rounded-lg my-3 shadow-md shadow-slate-600 hover:scale-95 transition-all'>
                 <Link to={'/community-discussion'}>
                     <h3 className='text-center text-2xl text-white'>General Discussions</h3>
                 </Link>
             </div>
-
-            {/* <div
-                initial={{ x: -200 }}
-                animate={{ x: 0 }}
-                transition={{
-                    duration: 1.5,
-                }}
-                className='bg-slate-800 py-5 px-4 mx-6 rounded-lg my-3 shadow-md shadow-green-300 hover:scale-95 transition-all'>
-                <Link to={'/community-events'}>
-                    <h3 className='text-center text-2xl text-white'>Community Events</h3>
-                </Link>
-            </div> */}
 
             <div
                 initial={{ x: -200 }}

@@ -1,35 +1,45 @@
 
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ImAttachment } from "react-icons/im";
-import RenderHTMLContent from '../../utils/RenderHTMLContent';
-import { MdNextPlan, MdDeleteOutline } from "react-icons/md";
-import { toast } from 'react-toastify';
-import myContext from '../../context/data/myContext';
+import { MdNextPlan } from "react-icons/md";
+import { useParams } from 'react-router-dom';
+import RenderHTMLContent from '../../../utils/RenderHTMLContent';
+import myContext from '../../../context/data/myContext';
 
-const Report = ({ reporttype, description, latitude, longitude,
-    anonymousReporting, images, deleteReport, reportUserID=-1,reportID}) => {
+const MyReport = () => {
 
+    const { id } = useParams();
     const [imageCnt, setImgCnt] = useState(0);
-
     const context = useContext(myContext);
+    const { getReportbyId } = context;
 
-    const {addNotification} = context;
-
-    const firstImage = images[imageCnt];
-
-    const additionalImagesCount = images.length - 1;
-
-    const totalImages = images.length;
+    const [report, setReport] = useState(null);
+    const [firstImage, setFI] = useState("");
+    const [additionalImages, setAI] = useState(0);
 
     const handleSlider = () => {
-        setImgCnt((prev) => (prev + 1) % totalImages);
-        return;
-    }
+        setImgCnt((prev) => (prev + 1) % (additionalImages + 1));
+    };
 
-    const reportFiled = async () => {
-        await addNotification(reportUserID,reportID);
-        toast.success("Report filed successfully!")
-    }
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const reportData = await getReportbyId(id);
+
+                setReport(reportData);
+
+                const images = reportData?.imageUrl;
+                const imagesLength = images?.length || 0;
+
+                setAI(imagesLength - 1);
+                setFI(images?.[imageCnt] || '');
+            } catch (error) {
+                console.error('Error fetching report data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     return (
 
@@ -39,23 +49,15 @@ const Report = ({ reporttype, description, latitude, longitude,
 
             <div className='flex flex-row justify-center'>
 
-                {/* <button onClick={deleteReport} className='bg-inherit text-red-600 text-xl'><MdDeleteOutline /></button> */}
-
-                <button onClick={reportFiled} className='bg-inherit text-green-600 text-sm md:text-xl
+                <button className='bg-inherit text-green-600 text-sm md:text-xl
                     border-2 px-3 md:px-6 border-gray-400 shadow-sm shadow-slate-500 transition-all
                     hover:shadow-md hover:shadow-slate-400'>
-                    Filed
-                </button>
-
-                <button onClick={deleteReport} className='bg-inherit text-red-600 text-sm md:text-xl
-                    border-2 px-3 md:px-6 border-gray-400 ml-8 shadow-sm shadow-slate-500 transition-all
-                    hover:shadow-md hover:shadow-slate-400'>
-                    Delete Report
+                    Report Filed
                 </button>
 
                 <h2 className='bg-red-500 hidden md:block text-white px-8 py-2 text-center mx-auto
-            lg:ml-[30%] w-fit rounded-lg my-auto'>
-                    {reporttype}
+            lg:ml-[50%] w-fit rounded-lg my-auto'>
+                    {report?.incidentType}
                 </h2>
 
             </div>
@@ -63,13 +65,13 @@ const Report = ({ reporttype, description, latitude, longitude,
 
             <p className="mb-1 mt-3 md:mt-10 lg:mt-5">
                 Location:{' '}
-                {latitude
-                    ? `Lat: ${latitude}, Lng: ${longitude}`
+                {report?.latitude
+                    ? `Lat: ${report?.latitude}, Lng: ${report?.longitude}`
                     : 'Not available'}
             </p>
 
             {
-                anonymousReporting
+                report?.anonymousReporting
                     ?
                     <p className='text-center mt-3 mb-2 border-2 border-slate-400 py-2 px-2 rounded-lg'>Anonymous Reporting</p>
                     :
@@ -77,12 +79,12 @@ const Report = ({ reporttype, description, latitude, longitude,
                     ""
             }
 
-            {description ?
+            {report?.description ?
                 <div className='my-4 px-3 py-2 font-semibold'>
-                    <RenderHTMLContent htmlContent={description} />
+                    <RenderHTMLContent htmlContent={report?.description} />
                 </div> : ""}
 
-            {firstImage ?
+            {report?.imageUrl ?
 
                 <div>
                     <div className='flex flex-row justify-center'>
@@ -97,24 +99,22 @@ const Report = ({ reporttype, description, latitude, longitude,
                             className='w-[60%] text-center ml-[20%] py-3 rounded-xl'
                         />
 
-                        {additionalImagesCount > 0 && (
+                        {additionalImages > 0 && (
                             <div className='w-fit h-fit my-[20%] ml-1 lg:ml-8 flex
                             bg-red-500 text-white rounded-full p-2 cursor-pointer'
                                 onClick={handleSlider}>
                                 <MdNextPlan className='text-2xl' />
-                                +{additionalImagesCount}
+                                +{additionalImages}
                             </div>
                         )}
                     </div>
+
                 </div>
-
                 :
-
                 ""}
-
-
         </div>
+
     )
 }
 
-export default Report
+export default MyReport;
