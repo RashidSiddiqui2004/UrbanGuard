@@ -23,7 +23,7 @@ Urban Guard is a comprehensive safety and emergency management application desig
 
 ## Prototype Designing 
 
-- Canva Design link [https://www.canva.com/design/DAF5rSi1q_c/b04oan0cmdj7FiK1raUP-w/edit?utm_content=DAF5rSi1q_c&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton]
+- Canva Design link [https://www.canva.com/design/DAF5rSi1q_c/_akHgs7tX8yR79dLoeRppw/view?utm_content=DAF5rSi1q_c&utm_campaign=designshare&utm_medium=link&utm_source=editor]
 
 - It contains UML digram, screenshots from the deployed website.
 
@@ -61,7 +61,7 @@ Provide the admin email-ID by editing the file UrbanGuard/src/utils/AdminDetails
 
 5. Start the application:
 
-   ```bash
+```bash
   npm run dev
 ```
 
