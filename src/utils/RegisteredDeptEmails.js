@@ -11,5 +11,4 @@ function isRegisteredUser(emailID) {
 }
 
 
-
 export default isRegisteredUser;

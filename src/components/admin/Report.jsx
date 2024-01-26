@@ -5,15 +5,17 @@ import RenderHTMLContent from '../../utils/RenderHTMLContent';
 import { MdNextPlan, MdDeleteOutline } from "react-icons/md";
 import { toast } from 'react-toastify';
 import myContext from '../../context/data/myContext';
+import { IoCheckmarkDone } from "react-icons/io5";
+
 
 const Report = ({ reporttype, description, latitude, longitude,
-    anonymousReporting, images, deleteReport, reportUserID=-1,reportID}) => {
+    anonymousReporting, images, deleteReport, reportUserID = -1, reportID, filed = false }) => {
 
     const [imageCnt, setImgCnt] = useState(0);
 
     const context = useContext(myContext);
 
-    const {addNotification} = context;
+    const { addNotification, UpdateReportState } = context;
 
     const firstImage = images[imageCnt];
 
@@ -27,7 +29,8 @@ const Report = ({ reporttype, description, latitude, longitude,
     }
 
     const reportFiled = async () => {
-        await addNotification(reportUserID,reportID);
+        await addNotification(reportUserID, reportID);
+        await UpdateReportState(reportID);
         toast.success("Report filed successfully!")
     }
 
@@ -35,7 +38,19 @@ const Report = ({ reporttype, description, latitude, longitude,
 
         <div className="mt-4 p-4 border border-gray-300 rounded-lg
              bg-slate-900 w-[80%] shadow-sm shadow-blue-400 mx-[10%]">
-            <h3 className="text-xl font-semibold mb-2 text-center">Report</h3>
+
+            <div className='flex flex-row justify-center'>
+                <h3 className="text-xl font-semibold mb-2 text-center">Report</h3>
+
+                {
+                    filed ?
+                        <div className='ml-8 text-3xl mt-0'>
+                            <IoCheckmarkDone />
+                        </div>
+                        :
+                        ""
+                }
+            </div>
 
             <div className='flex flex-row justify-center'>
 

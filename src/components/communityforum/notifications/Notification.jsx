@@ -1,9 +1,7 @@
 
 import React, { useState } from 'react';
 
-const Notification = ({ reportID, onClose = function (id) {
-  return id;
-} }) => {
+const Notification = ({ reportID,reportUserId,deleteNotification }) => {
 
   const [visible, setVisible] = useState(true);
  
@@ -12,7 +10,7 @@ const Notification = ({ reportID, onClose = function (id) {
   }
 
   return (
-    <div className={`w-[60%] ml-[20%] bg-slate-700 py-4 px-4 rounded-lg
+    <div className={` w-[80%] mx-[10%] md:w-[60%] md:ml-[20%] my-2 bg-slate-700 py-4 px-4 rounded-lg
      shadow-sm shadow-purple-400 will-change-scroll ${visible ? 'visible' : 'hidden'}`}>
 
       <h2>Good News,</h2>
@@ -21,8 +19,8 @@ const Notification = ({ reportID, onClose = function (id) {
           onClick={getReport}>{reportID} </span> has been filed.
       </h3>
 
-      <button onClick={() => { setVisible(false); onClose(reportID); }}
-        className='flex justify-end mt-2 ml-[70%] shadow-sm shadow-gray-900 bg-gray-800 border-blue-400 hover:border-green-700 transition-all'>
+      <button onClick={() => { setVisible(false); deleteNotification(reportID, reportUserId); }}
+        className='flex justify-end mt-2 align-middle md:ml-[70%] shadow-sm shadow-gray-900 bg-gray-800 border-blue-400 hover:border-green-700 transition-all'>
         Delete Notification
       </button>
     </div>

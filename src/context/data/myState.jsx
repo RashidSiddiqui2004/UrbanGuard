@@ -39,8 +39,8 @@ function myState(props) {
         const reportsRef = collection(fireDB, 'reports'); // Reference to the reports collection
 
         // Create a new report document
-
         // depending on anonymous reporting or not
+
         let report;
 
         if (anonymousReporting === false) {
@@ -52,6 +52,7 @@ function myState(props) {
                 latitude,
                 longitude,
                 imageUrl,
+                filed: false,
                 anonymousReporting: false,
                 timestamp: new Date(),
                 date: new Date().toLocaleString(
@@ -98,11 +99,44 @@ function myState(props) {
         try {
             const q = query(
                 collection(fireDB, 'reports'),
-                orderBy('timestamp', 'desc')
+                orderBy('timestamp', 'asc'),
+                where('filed', "==", false)
             );
 
             const data = onSnapshot(q, (QuerySnapshot) => {
                 let reportsArray = [];
+
+                QuerySnapshot.forEach((doc) => {
+                    reportsArray.push({ ...doc.data(), id: doc.id });
+                });
+                setReports(reportsArray);
+                setLoading(false);
+
+            });
+
+            return true;
+
+        } catch (error) {
+            setLoading(false)
+            return false;
+        }
+
+    }
+
+    const getFiledReports = async () => {
+        setLoading(true)
+
+        try {
+            const q = query(
+                collection(fireDB, 'reports'),
+                orderBy('timestamp', 'desc'),
+                where('filed', '==', true)
+            );
+
+            let reportsArray = [];
+
+            const data = onSnapshot(q, (QuerySnapshot) => {
+
                 QuerySnapshot.forEach((doc) => {
                     reportsArray.push({ ...doc.data(), id: doc.id });
                 });
@@ -110,10 +144,11 @@ function myState(props) {
                 setLoading(false);
             });
 
-            return () => data;
+            return reportsArray;
 
         } catch (error) {
             setLoading(false)
+            return false;
         }
 
     }
@@ -143,11 +178,60 @@ function myState(props) {
         return false;
     }
 
+    const addDeptAdmin = async (email, dept) => {
+
+        if (email == '' || dept == '') {
+            return toast.error("All fields are required")
+        }
+
+        const departmentMap = new Map();
+
+        departmentMap.set('Accident', 'Accident');
+        departmentMap.set('Infrastructure', 'Infrastructure Issue');
+        departmentMap.set('Crime', 'Crime');
+        departmentMap.set('Suspicious activities', 'Suspicious activities');
+        departmentMap.set('Cybersecurity', 'Cybersecurity Concerns');
+        departmentMap.set('Social Issues', 'Social Issues');
+
+        const adminRef = collection(fireDB, 'departments');
+
+        const deptName = departmentMap.get(dept);
+
+        const newAdminDept = {
+            emailID: email,
+            department: dept,
+            departmentName: deptName,
+            date: new Date().toLocaleString(
+                "en-US",
+                {
+                    month: "short",
+                    day: "2-digit",
+                    year: "numeric",
+                }
+            )
+        };
+
+
+        await setDoc(doc(adminRef), newAdminDept);
+
+        toast.success("Admin added", {
+            position: "top-right",
+            autoClose: 500,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true, 
+            theme: "colored",
+        })
+
+        return true;
+    }
+
     const getSpecificReports = async () => {
         return true;
     }
 
-    const getReportbyId =  async (reportID) => {
+    const getReportbyId = async (reportID) => {
         const reportRef = doc(fireDB, 'reports', reportID); // Replace 'threads' with your actual collection name
 
         try {
@@ -156,16 +240,15 @@ function myState(props) {
             if (reportDoc.exists()) {
                 // Extract thread data from the document
                 const data = { id: reportDoc.id, ...reportDoc.data() };
-
-                console.log(data);
+ 
                 return data;
-            }  
+            }
         } catch (error) {
             return null;
         }
     }
 
-    const message = "Your report has been filed."
+    const message = "Your report has been filed successfully."
 
     const addNotification = async (userid, reportID) => {
 
@@ -210,22 +293,45 @@ function myState(props) {
 
             // Access the documents from the snapshot
             const notifications = [];
-            
+
             notifSnapshot.forEach(doc => {
                 notifications.push({ id: doc.id, ...doc.data() });
-            }); 
+            });
 
             setNotifications(notifications);
 
             return true;
-        } catch (error) { 
+        } catch (error) {
             return false;
         }
     };
 
-    // const removeNotification = (notificationId) => {
-    //     setNotifications((prevNotifications) => prevNotifications.filter((n) => n.id !== notificationId));
-    // };
+    const deleteNotification = async (reportId, userId) => {
+        setLoading(true);
+
+        try {
+            const querySnapshot = await getDocs(query(collection(fireDB, 'notifications'),
+                where('reportID', '==', reportId),
+                where('userId', '==', userId)
+            ));
+
+            if (!querySnapshot.empty) {
+                // Delete the document
+                const docRef = querySnapshot.docs[0].ref;
+                await deleteDoc(docRef);
+
+                toast.success('Notification deleted !');
+                getAllReports();
+            } else {
+                toast.error('Report not found');
+            }
+
+            setLoading(false);
+        } catch (error) {
+            console.error('Error deleting report:', error);
+            setLoading(false);
+        }
+    };
 
     const deleteReport = async (report) => {
         setLoading(true)
@@ -237,6 +343,29 @@ function myState(props) {
         } catch (error) {
             console.log(error)
             setLoading(false)
+        }
+    }
+
+    const UpdateReportState = async (reportId) => {
+        try {
+            // Get a reference to the specific report document
+            const reportRef = doc(fireDB, 'reports', reportId);
+
+            // Get the current data of the report
+            const reportSnapshot = await getDoc(reportRef);
+            const reportData = reportSnapshot.data();
+
+            // Check if the 'filed' attribute exists
+            if (reportData && reportData.filed !== undefined) {
+                // 'filed' attribute exists, update it to true
+                await updateDoc(reportRef, { filed: true });
+            } else {
+                // 'filed' attribute doesn't exist, add it and set to true
+                await setDoc(reportRef, { filed: true }, { merge: true });
+            }
+
+        } catch (error) {
+            console.error('Error updating report state:', error);
         }
     }
 
@@ -738,8 +867,7 @@ function myState(props) {
                 if (!querySnapshot.empty) {
                     const userDocument = querySnapshot.docs[0].data();
                     let userEmail = userDocument.email;
-                    setEmail(userEmail);
-                    // console.log(userEmail);
+                    setEmail(userEmail); 
                     return userEmail;
                 } else {
                     console.log('No user found with the specified UID.');
@@ -806,7 +934,6 @@ function myState(props) {
     }
 
     // get replies for comment
-
     const [replies, setReplies] = useState([]);
 
     async function getReplies(commentId) {
@@ -820,8 +947,7 @@ function myState(props) {
                 if (!querySnapshot.empty) {
                     const userDocument = querySnapshot.docs[0].data();
                     let commentdata = userDocument;
-                    setReplies(commentdata);
-                    // console.log(commentReplies); 
+                    setReplies(commentdata); 
                 } else {
                     console.log('No reply found.');
                 }
@@ -982,9 +1108,10 @@ function myState(props) {
     return (
         <MyContext.Provider value={{
             mode, toggleMode, loading, setLoading,
-            sendReport, reports, getAllReports, reportType, setReportType, deleteReport,
-            getMyDept, getSpecificReports, addNotification, getMyNotifications,notifications,
-            getReportbyId,
+            sendReport, reports, getAllReports, getFiledReports, reportType,
+            setReportType, deleteReport, addDeptAdmin,
+            getMyDept, getSpecificReports, addNotification, getMyNotifications, notifications,
+            deleteNotification, getReportbyId, UpdateReportState,
             posts, setPosts, addPost, post, myposts, getMyPosts,
             deletePost, user, profiles, setProfiles, updateProfile,
             userProfile, setUserprofile, addProfile,

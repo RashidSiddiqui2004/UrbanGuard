@@ -15,7 +15,7 @@ const Layout = ({ children }) => {
         <div className='flex flex-row min-h-screen overflow-hidden overflow-x-hidden'>
 
             {/* Sidebar */}
-            <div className={`w-[30%] xl:w-[22%] bg-slate-400 ${isSidebarOpen ? 'block' : 'hidden'} lg:block overflow-hidden`}>
+            <div className={`xl:w-[22%] bg-slate-400 ${isSidebarOpen ? 'block' : 'hidden'} lg:block overflow-hidden`}>
                 <Sidebar />
             </div>
 
@@ -23,7 +23,6 @@ const Layout = ({ children }) => {
             <div className='w-full lg:w-[78%] bg-slate-800'>
 
                 {/* Hamburger Menu */}
-
                 <div className='text-lg lg:hidden fixed left-8 mt-6 cursor-pointer'
                     onClick={toggleSidebar}>
                     {!isSidebarOpen ?

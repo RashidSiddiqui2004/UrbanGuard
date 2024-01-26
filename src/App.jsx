@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -27,15 +27,20 @@ import UserProfile from './components/userprofile/UserProfile';
 import QnA from './components/communityforum/qna/QnA';
 import AdminDashboard from './components/admin/AdminDashboard';
 import ADMIN_EMAIL from './utils/AdminDetails';
-import isRegisteredUser from './utils/RegisteredDeptEmails';
+// import isRegisteredUser from './utils/RegisteredDeptEmails';
 import DepartmentAdminDB from './components/admin/DepartmentAdminDb';
 import NotificationSection from './components/communityforum/notifications/NotificationSection';
 import MyReport from './components/communityforum/notifications/MyReport';
+import myContext from './context/data/myContext';
+import LoadingSpinner from './utils/LoadingSpinner';
+
+
 
 function App() {
   return (
     <MyState>
       <Router>
+
         <Routes>
           <Route path="/" element={<Home />} />
 
@@ -106,7 +111,7 @@ function App() {
           <Route path="/myreport/:id" element={
             <ProtectedRoute>
               <Layout>
-                <MyReport/>
+                <MyReport />
               </Layout>
             </ProtectedRoute>
           } />
@@ -202,16 +207,40 @@ const ProtectedRouteForAdmin = ({ children }) => {
 
 }
 
-// department-wise
-
+// Department-admins
 const ProtectedRouteForDepartments = ({ children }) => {
-  const admin = JSON.parse(localStorage.getItem('user'))
 
-  if (isRegisteredUser(admin.user.email) === true) {
-    return children;
-  }
-  else {
-    return <Navigate to={'/login'} />
-  }
+  const context = useContext(myContext)
+  const { getMyDept } = context;
+
+  const user_emailID = JSON.parse(localStorage.getItem('user')).user.email;  
+
+  const [isDataFetched, setIsDataFetched] = useState(false);
+  const [department, setDept] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      const isDeptAdmin = await getMyDept(user_emailID);
+
+      if (isDeptAdmin!==false && isDeptAdmin.department !== null) {
+        setDept(isDeptAdmin.department);
+       } else {
+        throw new Error('User is not a department admin.');
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error); 
+    } finally {
+      setIsDataFetched(true);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);  
+
+  // Render logic
+  return isDataFetched ? (department !== null ? children : <Navigate to={'/'} />) 
+  : 
+  <LoadingSpinner/>;
 
 }

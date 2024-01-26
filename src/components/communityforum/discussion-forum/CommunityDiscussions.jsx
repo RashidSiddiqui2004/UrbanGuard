@@ -39,7 +39,7 @@ const CommunityDiscussions = () => {
 
             </div>
 
-            <div className='fixed bottom-0 lg:-bottom-3 w-[78%] mx-3'>
+            <div className='fixed bottom-0 lg:-bottom-3 w-[76%] mx-3'>
                 <DiscussInput />
             </div>
         </div>

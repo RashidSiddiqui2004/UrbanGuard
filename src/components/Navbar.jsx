@@ -1,17 +1,17 @@
 
-import React, { Fragment, useContext, useState } from 'react'
+import React, { Fragment, useContext, useEffect, useState } from 'react'
 import myContext from '../context/data/myContext';
 import { Link } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react'
 import { RxCross2 } from 'react-icons/rx'
 import ADMIN_EMAIL from '../utils/AdminDetails';
-import isRegisteredUser from '../utils/RegisteredDeptEmails';
+// import isRegisteredUser from '../utils/RegisteredDeptEmails';
 
 function Navbar() {
 
   const context = useContext(myContext);
 
-  const { mode } = context;
+  const { mode, getMyDept} = context;
 
   const [open, setOpen] = useState(false)
 
@@ -21,6 +21,29 @@ function Navbar() {
     localStorage.clear('user');
     window.location.href = '/login'
   }
+
+  const user_emailID = JSON.parse(localStorage.getItem('user'))?.user?.email;
+
+  const [department, setDept] = useState(null);
+
+  useEffect(() => {
+
+    const fetchData = async () => {
+      try {
+  
+        const isDeptAdmin = await getMyDept(user_emailID);
+        if(isDeptAdmin!==false){ 
+          setDept(isDeptAdmin?.department); 
+        }
+        
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  },[])
+ 
 
   return (
     <div className='bg-white sticky top-0 z-50'>
@@ -84,8 +107,14 @@ function Navbar() {
 
 
                   {user?.user?.email === ADMIN_EMAIL ? <div className="flow-root">
-                    <Link to={'/dashboard'} className="mt-[1px] -ml-2 block p-2 font-medium text-gray-900" style={{ color: mode === 'dark' ? 'white' : '', }}>
+                    <Link to={'/dashboard'} className="mt-[1px] -ml-2 block p-2 font-medium text-gray-900">
                       Admin
+                    </Link>
+                  </div> : ""}
+
+                  {(department!==null) ? <div className="flow-root">
+                    <Link to={'/departments-reports'} className="mt-[1px] -ml-2 block p-2 font-medium text-gray-900">
+                      Department Reports
                     </Link>
                   </div> : ""}
 
@@ -172,7 +201,13 @@ function Navbar() {
                       Admin
                     </Link> : ""}
 
-                  {isRegisteredUser(user?.user?.email) ? <div className="flow-root">
+                  {/* {isRegisteredUser(user?.user?.email) ? <div className="flow-root">
+                    <Link to={'/departments-reports'} className="text-sm font-medium text-white">
+                      Department Reports
+                    </Link>
+                  </div> : ""} */}
+
+                  {(department!==null) ? <div className="flow-root">
                     <Link to={'/departments-reports'} className="text-sm font-medium text-white">
                       Department Reports
                     </Link>

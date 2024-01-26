@@ -21,7 +21,7 @@ function Login() {
             const result = await signInWithEmailAndPassword(auth, email, password);
             toast.success("Login successful", {
                 position: "top-right",
-                autoClose: 2000,
+                autoClose: 800,
                 hideProgressBar: true,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -33,8 +33,17 @@ function Login() {
             navigate('/')
             setLoading(false)
 
-        } catch (error) {
-            console.log(error)
+        } catch (error) { 
+            toast.error("Login failed, Check your credentials!", {
+                position: "top-right",
+                autoClose: 800,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            })
             setLoading(loading)
         }
 
